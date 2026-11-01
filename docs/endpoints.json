@@ -1,0 +1,3791 @@
+[
+ {
+  "id": "domain.health",
+  "method": "GET",
+  "path": "/v1/domain/health",
+  "summary": "Domain health check",
+  "price": {
+   "amount": 80000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "bimi": {
+     "authority_url": "https://example.com/brand/vmc.pem",
+     "declined": false,
+     "dmarc_enforced": true,
+     "domain": "example.com",
+     "logo_url": "https://example.com/brand/logo.svg",
+     "name": "default._bimi.example.com",
+     "record": "v=BIMI1; l=https://example.com/brand/logo.svg; a=https://example.com/brand/vmc.pem",
+     "record_domain": "example.com",
+     "selector": "default"
+    },
+    "caa": {
+     "domain": "example.com",
+     "inherited": false,
+     "iodef": [
+      "mailto:security@example.com"
+     ],
+     "issuers": [
+      "letsencrypt.org"
+     ],
+     "record_name": "example.com",
+     "records": [
+      {
+       "critical": false,
+       "flags": 0,
+       "tag": "iodef",
+       "value": "mailto:security@example.com"
+      },
+      {
+       "critical": false,
+       "flags": 0,
+       "tag": "issue",
+       "value": "letsencrypt.org"
+      }
+     ],
+     "wildcard_issuers": [
+      "letsencrypt.org"
+     ]
+    },
+    "dkim": {
+     "domain": "example.com",
+     "found": [
+      {
+       "domain": "example.com",
+       "key_bits": 2048,
+       "key_bytes": 294,
+       "key_type": "rsa",
+       "name": "selector1._domainkey.example.com",
+       "record": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB",
+       "revoked": false,
+       "selector": "selector1",
+       "tags": [
+        {
+         "name": "v",
+         "value": "DKIM1"
+        },
+        {
+         "name": "k",
+         "value": "rsa"
+        },
+        {
+         "name": "p",
+         "value": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB"
+        }
+       ],
+       "testing": false
+      }
+     ],
+     "tried": [
+      "default",
+      "dkim",
+      "mail",
+      "smtp",
+      "sig1",
+      "s1",
+      "s2",
+      "k1",
+      "k2",
+      "k3",
+      "google",
+      "selector1",
+      "selector2",
+      "mandrill",
+      "smtpapi",
+      "mailo",
+      "mg",
+      "zoho",
+      "zmail",
+      "protonmail",
+      "protonmail2",
+      "protonmail3",
+      "fm1",
+      "fm2",
+      "fm3",
+      "mbo0001",
+      "mbo0002",
+      "mbo0003",
+      "mbo0004",
+      "mailjet",
+      "amazonses"
+     ]
+    },
+    "dmarc": {
+     "adkim": "r",
+     "applied_policy": "reject",
+     "aspf": "r",
+     "domain": "example.com",
+     "nonexistent_policy": "reject",
+     "org_domain": "example.com",
+     "pct": 100,
+     "policy": "reject",
+     "record": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com",
+     "record_domain": "example.com",
+     "rua": [
+      "mailto:dmarc@example.com"
+     ],
+     "ruf": [],
+     "subdomain_policy": "reject",
+     "tags": [
+      {
+       "name": "v",
+       "value": "DMARC1"
+      },
+      {
+       "name": "p",
+       "value": "reject"
+      },
+      {
+       "name": "rua",
+       "value": "mailto:dmarc@example.com"
+      }
+     ],
+     "test_mode": false
+    },
+    "dnssec": {
+     "dnskeys": [
+      {
+       "algorithm": 13,
+       "flags": 256,
+       "protocol": 3,
+       "role": "zsk"
+      },
+      {
+       "algorithm": 13,
+       "flags": 257,
+       "protocol": 3,
+       "role": "ksk"
+      }
+     ],
+     "domain": "example.com",
+     "ds": [
+      {
+       "algorithm": 13,
+       "digest_type": 2,
+       "key_tag": 2371
+      }
+     ],
+     "state": "secure",
+     "validated": true
+    },
+    "domain": "example.com",
+    "mta_sts": {
+     "domain": "example.com",
+     "mx_hosts": [
+      "mx1.example.com",
+      "mx2.example.com"
+     ],
+     "policy": {
+      "max_age": 604800,
+      "mode": "enforce",
+      "mx": [
+       "*.example.com"
+      ],
+      "version": "STSv1"
+     },
+     "policy_fetched": true,
+     "policy_id": "20261024T120000",
+     "record": "v=STSv1; id=20261024T120000",
+     "tlsrpt_record": "v=TLSRPTv1; rua=mailto:tlsrpt@example.com",
+     "tlsrpt_rua": [
+      "mailto:tlsrpt@example.com"
+     ],
+     "uncovered_mx": []
+    },
+    "mx": {
+     "domain": "example.com",
+     "hosts": [
+      {
+       "addresses": [
+        "192.0.2.25"
+       ],
+       "exchange": "mx1.example.com",
+       "preference": 10,
+       "resolved": true
+      },
+      {
+       "addresses": [
+        "192.0.2.26"
+       ],
+       "exchange": "mx2.example.com",
+       "preference": 20,
+       "resolved": true
+      }
+     ],
+     "implicit_mx": false,
+     "null_mx": false
+    },
+    "provider": {
+     "domain": "example.com",
+     "list_version": "2026-10-31",
+     "primary": null,
+     "providers": []
+    },
+    "ptr": {
+     "addresses": [
+      {
+       "address": "192.0.2.25",
+       "forward_confirmed": true,
+       "host": "mx1.example.com",
+       "ptr_names": [
+        "mx1.example.com"
+       ]
+      },
+      {
+       "address": "192.0.2.26",
+       "forward_confirmed": true,
+       "host": "mx2.example.com",
+       "ptr_names": [
+        "mx2.example.com"
+       ]
+      }
+     ],
+     "domain": "example.com"
+    },
+    "spf": {
+     "all_qualifier": "-",
+     "dns_lookup_count": 1,
+     "domain": "example.com",
+     "lookup_count_complete": true,
+     "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+     "tree": {
+      "children": [
+       {
+        "children": [],
+        "domain": "_spf.example.net",
+        "error": null,
+        "record": "v=spf1 ip4:198.51.100.0/24 -all",
+        "terms": [
+         {
+          "kind": "mechanism",
+          "name": "ip4",
+          "qualifier": null,
+          "raw": "ip4:198.51.100.0/24",
+          "value": "198.51.100.0/24"
+         },
+         {
+          "kind": "mechanism",
+          "name": "all",
+          "qualifier": "-",
+          "raw": "-all",
+          "value": null
+         }
+        ],
+        "via": "include"
+       }
+      ],
+      "domain": "example.com",
+      "error": null,
+      "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+      "terms": [
+       {
+        "kind": "mechanism",
+        "name": "ip4",
+        "qualifier": null,
+        "raw": "ip4:192.0.2.0/24",
+        "value": "192.0.2.0/24"
+       },
+       {
+        "kind": "mechanism",
+        "name": "include",
+        "qualifier": null,
+        "raw": "include:_spf.example.net",
+        "value": "_spf.example.net"
+       },
+       {
+        "kind": "mechanism",
+        "name": "all",
+        "qualifier": "-",
+        "raw": "-all",
+        "value": null
+       }
+      ],
+      "via": "root"
+     },
+     "void_lookup_count": 0
+    }
+   },
+   "endpoint": "domain.health",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "domain.rdap",
+  "method": "GET",
+  "path": "/v1/domain/rdap",
+  "summary": "RDAP domain lookup",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "created": "1995-08-14T04:00:00Z",
+    "days_to_expiry": 292,
+    "delegation_signed": true,
+    "domain": "example.com",
+    "expires": "2027-08-13T04:00:00Z",
+    "last_changed": "2026-08-14T07:01:39Z",
+    "ldh_name": "example.com",
+    "nameservers": [
+     "a.iana-servers.net",
+     "b.iana-servers.net"
+    ],
+    "rdap_server": "rdap.verisign.com",
+    "registered": true,
+    "registrar": "RESERVED-Internet Assigned Numbers Authority",
+    "registrar_iana_id": 376,
+    "statuses": [
+     "client delete prohibited",
+     "client transfer prohibited",
+     "client update prohibited"
+    ]
+   },
+   "endpoint": "domain.rdap",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "site.health",
+  "method": "GET",
+  "path": "/v1/site/health",
+  "summary": "Site health check",
+  "price": {
+   "amount": 25000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "http": {
+     "domain": "example.com",
+     "from_http": {
+      "error": null,
+      "final_status": 200,
+      "final_url": "https://example.com/",
+      "hops": [
+       {
+        "location": "https://example.com/",
+        "status": 301,
+        "url": "http://example.com/"
+       },
+       {
+        "location": null,
+        "status": 200,
+        "url": "https://example.com/"
+       }
+      ],
+      "start_url": "http://example.com/"
+     },
+     "from_https": {
+      "error": null,
+      "final_status": 200,
+      "final_url": "https://example.com/",
+      "hops": [
+       {
+        "location": null,
+        "status": 200,
+        "url": "https://example.com/"
+       }
+      ],
+      "start_url": "https://example.com/"
+     },
+     "headers": {
+      "content_security_policy": "default-src 'self'; frame-ancestors 'none'",
+      "content_security_policy_report_only": null,
+      "cookies": [
+       {
+        "http_only": true,
+        "name": "session",
+        "same_site": "lax",
+        "secure": true
+       }
+      ],
+      "cross_origin_opener_policy": "same-origin",
+      "permissions_policy": "camera=(), microphone=()",
+      "referrer_policy": "strict-origin-when-cross-origin",
+      "strict_transport_security": {
+       "include_subdomains": true,
+       "max_age": 63072000,
+       "preload": true,
+       "raw": "max-age=63072000; includeSubDomains; preload",
+       "valid": true
+      },
+      "x_content_type_options": "nosniff",
+      "x_frame_options": null
+     }
+    },
+    "rdap": {
+     "created": "1995-08-14T04:00:00Z",
+     "days_to_expiry": 292,
+     "delegation_signed": true,
+     "domain": "example.com",
+     "expires": "2027-08-13T04:00:00Z",
+     "last_changed": "2026-08-14T07:01:39Z",
+     "ldh_name": "example.com",
+     "nameservers": [
+      "a.iana-servers.net",
+      "b.iana-servers.net"
+     ],
+     "rdap_server": "rdap.verisign.com",
+     "registered": true,
+     "registrar": "RESERVED-Internet Assigned Numbers Authority",
+     "registrar_iana_id": 376,
+     "statuses": [
+      "client delete prohibited",
+      "client transfer prohibited",
+      "client update prohibited"
+     ]
+    },
+    "tls": {
+     "address_family": "ipv4",
+     "chain": [
+      {
+       "issuer": "CN=Example Issuing CA",
+       "subject": "CN=example.com"
+      },
+      {
+       "issuer": "CN=Example Issuing CA",
+       "subject": "CN=Example Issuing CA"
+      }
+     ],
+     "cipher": "TLS_AES_256_GCM_SHA384",
+     "days_remaining": 36,
+     "domain": "example.com",
+     "hostname_match": true,
+     "issuer": "CN=Example Issuing CA",
+     "key_bits": 256,
+     "key_type": "ec",
+     "not_after": "2026-11-30T00:00:00Z",
+     "not_before": "2026-09-01T00:00:00Z",
+     "san": [
+      "example.com",
+      "www.example.com"
+     ],
+     "serial_number": "5ec0de",
+     "signature_algorithm": "ecdsa-with-SHA256",
+     "subject_cn": "example.com",
+     "tls_version": "TLSv1.3",
+     "trusted": true,
+     "untrusted_reason": null
+    }
+   },
+   "endpoint": "site.health",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.bimi",
+  "method": "GET",
+  "path": "/v1/mail/bimi",
+  "summary": "BIMI record check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   },
+   {
+    "name": "selector",
+    "required": false,
+    "example": null
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "authority_url": "https://example.com/brand/vmc.pem",
+    "declined": false,
+    "dmarc_enforced": true,
+    "domain": "example.com",
+    "logo_url": "https://example.com/brand/logo.svg",
+    "name": "default._bimi.example.com",
+    "record": "v=BIMI1; l=https://example.com/brand/logo.svg; a=https://example.com/brand/vmc.pem",
+    "record_domain": "example.com",
+    "selector": "default"
+   },
+   "endpoint": "mail.bimi",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.bimi_parse",
+  "method": "POST",
+  "path": "/v1/mail/bimi-parse",
+  "summary": "BIMI record parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "record"
+  ],
+  "body_example": {
+   "record": "v=BIMI1; l=https://example.com/brand/logo.svg; a=https://example.com/brand/vmc.pem"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "authority_url": "https://example.com/brand/vmc.pem",
+    "declined": false,
+    "is_bimi": true,
+    "logo_url": "https://example.com/brand/logo.svg",
+    "notes": [
+     "The logo and the mark certificate are not downloaded, and DMARC enforcement, which BIMI requires, needs the BIMI check on a domain."
+    ],
+    "record": "v=BIMI1; l=https://example.com/brand/logo.svg; a=https://example.com/brand/vmc.pem",
+    "tags": [
+     {
+      "name": "v",
+      "value": "BIMI1"
+     },
+     {
+      "name": "l",
+      "value": "https://example.com/brand/logo.svg"
+     },
+     {
+      "name": "a",
+      "value": "https://example.com/brand/vmc.pem"
+     }
+    ],
+    "valid": true
+   },
+   "endpoint": "mail.bimi_parse",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.check",
+  "method": "GET",
+  "path": "/v1/mail/check",
+  "summary": "Mail configuration check",
+  "price": {
+   "amount": 30000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   },
+   {
+    "name": "dkim_selectors",
+    "required": false,
+    "example": [
+     "selector1"
+    ]
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "dkim": [
+     {
+      "domain": "example.com",
+      "key_bits": 2048,
+      "key_bytes": 294,
+      "key_type": "rsa",
+      "name": "selector1._domainkey.example.com",
+      "record": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB",
+      "revoked": false,
+      "selector": "selector1",
+      "tags": [
+       {
+        "name": "v",
+        "value": "DKIM1"
+       },
+       {
+        "name": "k",
+        "value": "rsa"
+       },
+       {
+        "name": "p",
+        "value": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB"
+       }
+      ],
+      "testing": false
+     }
+    ],
+    "dmarc": {
+     "adkim": "r",
+     "applied_policy": "reject",
+     "aspf": "r",
+     "domain": "example.com",
+     "nonexistent_policy": "reject",
+     "org_domain": "example.com",
+     "pct": 100,
+     "policy": "reject",
+     "record": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com",
+     "record_domain": "example.com",
+     "rua": [
+      "mailto:dmarc@example.com"
+     ],
+     "ruf": [],
+     "subdomain_policy": "reject",
+     "tags": [
+      {
+       "name": "v",
+       "value": "DMARC1"
+      },
+      {
+       "name": "p",
+       "value": "reject"
+      },
+      {
+       "name": "rua",
+       "value": "mailto:dmarc@example.com"
+      }
+     ],
+     "test_mode": false
+    },
+    "domain": "example.com",
+    "incomplete": [],
+    "mx": {
+     "domain": "example.com",
+     "hosts": [
+      {
+       "addresses": [
+        "192.0.2.25"
+       ],
+       "exchange": "mx1.example.com",
+       "preference": 10,
+       "resolved": true
+      },
+      {
+       "addresses": [
+        "192.0.2.26"
+       ],
+       "exchange": "mx2.example.com",
+       "preference": 20,
+       "resolved": true
+      }
+     ],
+     "implicit_mx": false,
+     "null_mx": false
+    },
+    "spf": {
+     "all_qualifier": "-",
+     "dns_lookup_count": 1,
+     "domain": "example.com",
+     "lookup_count_complete": true,
+     "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+     "tree": {
+      "children": [
+       {
+        "children": [],
+        "domain": "_spf.example.net",
+        "error": null,
+        "record": "v=spf1 ip4:198.51.100.0/24 -all",
+        "terms": [
+         {
+          "kind": "mechanism",
+          "name": "ip4",
+          "qualifier": null,
+          "raw": "ip4:198.51.100.0/24",
+          "value": "198.51.100.0/24"
+         },
+         {
+          "kind": "mechanism",
+          "name": "all",
+          "qualifier": "-",
+          "raw": "-all",
+          "value": null
+         }
+        ],
+        "via": "include"
+       }
+      ],
+      "domain": "example.com",
+      "error": null,
+      "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+      "terms": [
+       {
+        "kind": "mechanism",
+        "name": "ip4",
+        "qualifier": null,
+        "raw": "ip4:192.0.2.0/24",
+        "value": "192.0.2.0/24"
+       },
+       {
+        "kind": "mechanism",
+        "name": "include",
+        "qualifier": null,
+        "raw": "include:_spf.example.net",
+        "value": "_spf.example.net"
+       },
+       {
+        "kind": "mechanism",
+        "name": "all",
+        "qualifier": "-",
+        "raw": "-all",
+        "value": null
+       }
+      ],
+      "via": "root"
+     },
+     "void_lookup_count": 0
+    }
+   },
+   "endpoint": "mail.check",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.check.bulk",
+  "method": "POST",
+  "path": "/v1/mail/check/bulk",
+  "summary": "Bulk mail configuration check",
+  "price": {
+   "kind": "per_item",
+   "max_items": 20,
+   "minimum": 30000,
+   "per_item": 24000
+  },
+  "params": [],
+  "body_fields": [
+   "domains"
+  ],
+  "body_example": {
+   "domains": [
+    "example.com",
+    "example.org"
+   ]
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "endpoint": "mail.check.bulk",
+   "failed_count": 0,
+   "item_count": 2,
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "results": [
+    {
+     "error": null,
+     "index": 0,
+     "item": "example.com",
+     "result": {
+      "checked_at": "2026-10-24T12:00:00Z",
+      "data": {
+       "dkim": [],
+       "dmarc": {
+        "adkim": "r",
+        "applied_policy": "reject",
+        "aspf": "r",
+        "domain": "example.com",
+        "nonexistent_policy": "reject",
+        "org_domain": "example.com",
+        "pct": 100,
+        "policy": "reject",
+        "record": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com",
+        "record_domain": "example.com",
+        "rua": [
+         "mailto:dmarc@example.com"
+        ],
+        "ruf": [],
+        "subdomain_policy": "reject",
+        "tags": [
+         {
+          "name": "v",
+          "value": "DMARC1"
+         },
+         {
+          "name": "p",
+          "value": "reject"
+         },
+         {
+          "name": "rua",
+          "value": "mailto:dmarc@example.com"
+         }
+        ],
+        "test_mode": false
+       },
+       "domain": "example.com",
+       "incomplete": [],
+       "mx": {
+        "domain": "example.com",
+        "hosts": [
+         {
+          "addresses": [
+           "192.0.2.25"
+          ],
+          "exchange": "mx1.example.com",
+          "preference": 10,
+          "resolved": true
+         },
+         {
+          "addresses": [
+           "192.0.2.26"
+          ],
+          "exchange": "mx2.example.com",
+          "preference": 20,
+          "resolved": true
+         }
+        ],
+        "implicit_mx": false,
+        "null_mx": false
+       },
+       "spf": {
+        "all_qualifier": "-",
+        "dns_lookup_count": 1,
+        "domain": "example.com",
+        "lookup_count_complete": true,
+        "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+        "tree": {
+         "children": [
+          {
+           "children": [],
+           "domain": "_spf.example.net",
+           "error": null,
+           "record": "v=spf1 ip4:198.51.100.0/24 -all",
+           "terms": [
+            {
+             "kind": "mechanism",
+             "name": "ip4",
+             "qualifier": null,
+             "raw": "ip4:198.51.100.0/24",
+             "value": "198.51.100.0/24"
+            },
+            {
+             "kind": "mechanism",
+             "name": "all",
+             "qualifier": "-",
+             "raw": "-all",
+             "value": null
+            }
+           ],
+           "via": "include"
+          }
+         ],
+         "domain": "example.com",
+         "error": null,
+         "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+         "terms": [
+          {
+           "kind": "mechanism",
+           "name": "ip4",
+           "qualifier": null,
+           "raw": "ip4:192.0.2.0/24",
+           "value": "192.0.2.0/24"
+          },
+          {
+           "kind": "mechanism",
+           "name": "include",
+           "qualifier": null,
+           "raw": "include:_spf.example.net",
+           "value": "_spf.example.net"
+          },
+          {
+           "kind": "mechanism",
+           "name": "all",
+           "qualifier": "-",
+           "raw": "-all",
+           "value": null
+          }
+         ],
+         "via": "root"
+        },
+        "void_lookup_count": 0
+       }
+      },
+      "endpoint": "mail.check",
+      "findings": [],
+      "meta": {
+       "cache_hit": false,
+       "duration_ms": 42,
+       "fresh_until": "2026-10-24T12:05:00Z",
+       "observed_at": "2026-10-24T12:00:00Z",
+       "resolver": "example",
+       "source": "dns"
+      },
+      "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "schema_version": "1.0",
+      "status": "ok"
+     }
+    },
+    {
+     "error": null,
+     "index": 1,
+     "item": "example.org",
+     "result": {
+      "checked_at": "2026-10-24T12:00:00Z",
+      "data": {
+       "dkim": [],
+       "dmarc": {
+        "adkim": null,
+        "applied_policy": null,
+        "aspf": null,
+        "domain": "example.org",
+        "nonexistent_policy": null,
+        "org_domain": "example.org",
+        "pct": null,
+        "policy": null,
+        "record": null,
+        "record_domain": null,
+        "rua": [],
+        "ruf": [],
+        "subdomain_policy": null,
+        "tags": [],
+        "test_mode": false
+       },
+       "domain": "example.org",
+       "incomplete": [],
+       "mx": {
+        "domain": "example.org",
+        "hosts": [],
+        "implicit_mx": false,
+        "null_mx": false
+       },
+       "spf": {
+        "all_qualifier": null,
+        "dns_lookup_count": 0,
+        "domain": "example.org",
+        "lookup_count_complete": true,
+        "record": null,
+        "tree": null,
+        "void_lookup_count": 0
+       }
+      },
+      "endpoint": "mail.check",
+      "findings": [
+       {
+        "code": "DMARC_NOT_FOUND",
+        "evidence": {
+         "count": 1,
+         "items": [
+          {
+           "domain": "example.org",
+           "org_domain": "example.org"
+          }
+         ]
+        },
+        "explanation": "Without DMARC, receivers apply their own handling to mail that fails SPF and DKIM alignment, and the domain owner receives no reports.",
+        "message": "No DMARC record was found for the domain or any of its parent domains.",
+        "recommendation": "Publish a DMARC record, for example with p=none and a rua address, and use the reports to plan further steps.",
+        "severity": "warning"
+       },
+       {
+        "code": "DNS_DOMAIN_NOT_FOUND",
+        "evidence": {
+         "count": 2,
+         "items": [
+          {
+           "name": "example.org"
+          },
+          {
+           "name": "example.org"
+          }
+         ]
+        },
+        "explanation": "The resolver answered NXDOMAIN: it found no records for this name. Another resolver or a recent registration or delegation change could give a different answer.",
+        "message": "The DNS resolver reported that the domain does not exist.",
+        "recommendation": "Check the spelling and that the domain is registered and delegated.",
+        "severity": "error"
+       }
+      ],
+      "meta": {
+       "cache_hit": false,
+       "duration_ms": 42,
+       "fresh_until": "2026-10-24T12:05:00Z",
+       "observed_at": "2026-10-24T12:00:00Z",
+       "resolver": "example",
+       "source": "dns"
+      },
+      "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "schema_version": "1.0",
+      "status": "error"
+     }
+    }
+   ],
+   "retry_token": null,
+   "schema_version": "1.0",
+   "succeeded_count": 2
+  }
+ },
+ {
+  "id": "mail.dkim",
+  "method": "GET",
+  "path": "/v1/mail/dkim",
+  "summary": "DKIM record check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   },
+   {
+    "name": "selector",
+    "required": true,
+    "example": "selector1"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "key_bits": 2048,
+    "key_bytes": 294,
+    "key_type": "rsa",
+    "name": "selector1._domainkey.example.com",
+    "record": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB",
+    "revoked": false,
+    "selector": "selector1",
+    "tags": [
+     {
+      "name": "v",
+      "value": "DKIM1"
+     },
+     {
+      "name": "k",
+      "value": "rsa"
+     },
+     {
+      "name": "p",
+      "value": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB"
+     }
+    ],
+    "testing": false
+   },
+   "endpoint": "mail.dkim",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.dkim_discover",
+  "method": "GET",
+  "path": "/v1/mail/dkim-discover",
+  "summary": "DKIM selector finder",
+  "price": {
+   "amount": 20000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "found": [
+     {
+      "domain": "example.com",
+      "key_bits": 2048,
+      "key_bytes": 294,
+      "key_type": "rsa",
+      "name": "selector1._domainkey.example.com",
+      "record": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB",
+      "revoked": false,
+      "selector": "selector1",
+      "tags": [
+       {
+        "name": "v",
+        "value": "DKIM1"
+       },
+       {
+        "name": "k",
+        "value": "rsa"
+       },
+       {
+        "name": "p",
+        "value": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs6ZX/GhLgrfk4EWkcLHLsAA/sQpuwePEUAD14pyq8i99ADfMijZm/6TcqsTnpjDtgAgZ8UR5WAOeY8V5E07QFzvrYrm+Yxv++MVwRgxn5pG4IASlD+gvXY56Pqx553B4GD7ktrskcBZJbPBgshVmzJyP+wrCy8UHfa4wF/AOjWFAUvVkI1iuxTcz3w/P2n0GKqiMh/KfURMc1RPVTqbFuSsoLzZjTAY5K8gLxPIffaXdwN9BQpzr+YSQSjf0gFTCo2CoBByxCR/7Me4yAyIyy7OKORBsvLsCwCFJxlU73QAwzuPW19NKdTHuv20wP+MsW4OXkgy9xmmDU6wvzBcmmwIDAQAB"
+       }
+      ],
+      "testing": false
+     }
+    ],
+    "tried": [
+     "default",
+     "dkim",
+     "mail",
+     "smtp",
+     "sig1",
+     "s1",
+     "s2",
+     "k1",
+     "k2",
+     "k3",
+     "google",
+     "selector1",
+     "selector2",
+     "mandrill",
+     "smtpapi",
+     "mailo",
+     "mg",
+     "zoho",
+     "zmail",
+     "protonmail",
+     "protonmail2",
+     "protonmail3",
+     "fm1",
+     "fm2",
+     "fm3",
+     "mbo0001",
+     "mbo0002",
+     "mbo0003",
+     "mbo0004",
+     "mailjet",
+     "amazonses"
+    ]
+   },
+   "endpoint": "mail.dkim_discover",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.dmarc",
+  "method": "GET",
+  "path": "/v1/mail/dmarc",
+  "summary": "DMARC check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "adkim": "r",
+    "applied_policy": "reject",
+    "aspf": "r",
+    "domain": "example.com",
+    "nonexistent_policy": "reject",
+    "org_domain": "example.com",
+    "pct": 100,
+    "policy": "reject",
+    "record": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com",
+    "record_domain": "example.com",
+    "rua": [
+     "mailto:dmarc@example.com"
+    ],
+    "ruf": [],
+    "subdomain_policy": "reject",
+    "tags": [
+     {
+      "name": "v",
+      "value": "DMARC1"
+     },
+     {
+      "name": "p",
+      "value": "reject"
+     },
+     {
+      "name": "rua",
+      "value": "mailto:dmarc@example.com"
+     }
+    ],
+    "test_mode": false
+   },
+   "endpoint": "mail.dmarc",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.dmarc_parse",
+  "method": "POST",
+  "path": "/v1/mail/dmarc-parse",
+  "summary": "DMARC record parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "record"
+  ],
+  "body_example": {
+   "record": "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; adkim=s"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "adkim": "s",
+    "aspf": "r",
+    "is_dmarc": true,
+    "nonexistent_policy": "quarantine",
+    "notes": [
+     "The policy shown is the record's own p=; for a subdomain the sp= or np= value can apply instead. The DMARC check on a domain decides which record and policy apply.",
+     "Whether a report address in another domain accepts reports (RFC 9989 external destination verification) needs DNS and is not checked."
+    ],
+    "pct": 100,
+    "policy": "quarantine",
+    "psd": null,
+    "record": "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; adkim=s",
+    "rua": [
+     "mailto:dmarc@example.com"
+    ],
+    "ruf": [],
+    "subdomain_policy": "quarantine",
+    "tags": [
+     {
+      "name": "v",
+      "value": "DMARC1"
+     },
+     {
+      "name": "p",
+      "value": "quarantine"
+     },
+     {
+      "name": "rua",
+      "value": "mailto:dmarc@example.com"
+     },
+     {
+      "name": "adkim",
+      "value": "s"
+     }
+    ],
+    "test_mode": false,
+    "unknown_tags": []
+   },
+   "endpoint": "mail.dmarc_parse",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.mta_sts",
+  "method": "GET",
+  "path": "/v1/mail/mta-sts",
+  "summary": "MTA-STS and TLS-RPT check",
+  "price": {
+   "amount": 20000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "mx_hosts": [
+     "mx1.example.com",
+     "mx2.example.com"
+    ],
+    "policy": {
+     "max_age": 604800,
+     "mode": "enforce",
+     "mx": [
+      "*.example.com"
+     ],
+     "version": "STSv1"
+    },
+    "policy_fetched": true,
+    "policy_id": "20261024T120000",
+    "record": "v=STSv1; id=20261024T120000",
+    "tlsrpt_record": "v=TLSRPTv1; rua=mailto:tlsrpt@example.com",
+    "tlsrpt_rua": [
+     "mailto:tlsrpt@example.com"
+    ],
+    "uncovered_mx": []
+   },
+   "endpoint": "mail.mta_sts",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.mta_sts_parse",
+  "method": "POST",
+  "path": "/v1/mail/mta-sts-parse",
+  "summary": "MTA-STS policy parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "policy"
+  ],
+  "body_example": {
+   "policy": "version: STSv1\nmode: testing\nmx: mx1.example.com\nmx: *.mail.example.com\nmax_age: 604800\n"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "mx_count": 2,
+    "notes": [
+     "Only the policy text is read. Whether the domain publishes an _mta-sts record, serves this file at https://mta-sts.<domain>/.well-known/mta-sts.txt and lists matching MX hosts needs the MTA-STS check."
+    ],
+    "policy": {
+     "max_age": 604800,
+     "mode": "testing",
+     "mx": [
+      "mx1.example.com",
+      "*.mail.example.com"
+     ],
+     "version": "STSv1"
+    },
+    "problems": [],
+    "valid": true
+   },
+   "endpoint": "mail.mta_sts_parse",
+   "findings": [
+    {
+     "code": "MTASTS_MODE_TESTING",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {}
+      ]
+     },
+     "explanation": "In testing mode senders report TLS failures through TLS-RPT but still deliver the mail, so the policy does not yet protect against downgrade attacks.",
+     "message": "The MTA-STS policy is in testing mode.",
+     "recommendation": "Move to mode enforce once TLS-RPT reports show that all MX hosts pass.",
+     "severity": "warning"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "warning"
+  }
+ },
+ {
+  "id": "mail.mx",
+  "method": "GET",
+  "path": "/v1/mail/mx",
+  "summary": "MX lookup",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "hosts": [
+     {
+      "addresses": [
+       "192.0.2.25"
+      ],
+      "exchange": "mx1.example.com",
+      "preference": 10,
+      "resolved": true
+     },
+     {
+      "addresses": [
+       "192.0.2.26"
+      ],
+      "exchange": "mx2.example.com",
+      "preference": 20,
+      "resolved": true
+     }
+    ],
+    "implicit_mx": false,
+    "null_mx": false
+   },
+   "endpoint": "mail.mx",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.provider",
+  "method": "GET",
+  "path": "/v1/mail/provider",
+  "summary": "Mail provider detection",
+  "price": {
+   "amount": 5000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "list_version": "2026-10-31",
+    "primary": null,
+    "providers": []
+   },
+   "endpoint": "mail.provider",
+   "findings": [
+    {
+     "code": "MAIL_PROVIDER_UNKNOWN",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "domain": "example.com"
+       }
+      ]
+     },
+     "explanation": "The domain receives mail, but none of its MX host names matches a provider on Lookproof's fixed list. The domain may run its own mail servers or use a provider that is not on the list.",
+     "message": "The MX hosts match no provider on the list.",
+     "recommendation": null,
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "mail.ptr",
+  "method": "GET",
+  "path": "/v1/mail/ptr",
+  "summary": "Reverse DNS check for mail servers",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "addresses": [
+     {
+      "address": "192.0.2.25",
+      "forward_confirmed": true,
+      "host": "mx1.example.com",
+      "ptr_names": [
+       "mx1.example.com"
+      ]
+     },
+     {
+      "address": "192.0.2.26",
+      "forward_confirmed": true,
+      "host": "mx2.example.com",
+      "ptr_names": [
+       "mx2.example.com"
+      ]
+     }
+    ],
+    "domain": "example.com"
+   },
+   "endpoint": "mail.ptr",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.spf",
+  "method": "GET",
+  "path": "/v1/mail/spf",
+  "summary": "SPF check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "all_qualifier": "-",
+    "dns_lookup_count": 1,
+    "domain": "example.com",
+    "lookup_count_complete": true,
+    "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+    "tree": {
+     "children": [
+      {
+       "children": [],
+       "domain": "_spf.example.net",
+       "error": null,
+       "record": "v=spf1 ip4:198.51.100.0/24 -all",
+       "terms": [
+        {
+         "kind": "mechanism",
+         "name": "ip4",
+         "qualifier": null,
+         "raw": "ip4:198.51.100.0/24",
+         "value": "198.51.100.0/24"
+        },
+        {
+         "kind": "mechanism",
+         "name": "all",
+         "qualifier": "-",
+         "raw": "-all",
+         "value": null
+        }
+       ],
+       "via": "include"
+      }
+     ],
+     "domain": "example.com",
+     "error": null,
+     "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+     "terms": [
+      {
+       "kind": "mechanism",
+       "name": "ip4",
+       "qualifier": null,
+       "raw": "ip4:192.0.2.0/24",
+       "value": "192.0.2.0/24"
+      },
+      {
+       "kind": "mechanism",
+       "name": "include",
+       "qualifier": null,
+       "raw": "include:_spf.example.net",
+       "value": "_spf.example.net"
+      },
+      {
+       "kind": "mechanism",
+       "name": "all",
+       "qualifier": "-",
+       "raw": "-all",
+       "value": null
+      }
+     ],
+     "via": "root"
+    },
+    "void_lookup_count": 0
+   },
+   "endpoint": "mail.spf",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.spf_flatten",
+  "method": "GET",
+  "path": "/v1/mail/spf-flatten",
+  "summary": "SPF flattening check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "complete": true,
+    "dns_lookup_count": 1,
+    "domain": "example.com",
+    "incomplete": [],
+    "ipv4_address_count": 512,
+    "ipv6_network_count": 0,
+    "networks": [
+     {
+      "network": "192.0.2.0/24",
+      "sources": [
+       {
+        "domain": "example.com",
+        "mechanism": "ip4:192.0.2.0/24"
+       }
+      ]
+     },
+     {
+      "network": "198.51.100.0/24",
+      "sources": [
+       {
+        "domain": "_spf.example.net",
+        "mechanism": "ip4:198.51.100.0/24"
+       }
+      ]
+     }
+    ],
+    "record": "v=spf1 ip4:192.0.2.0/24 include:_spf.example.net -all",
+    "unflattenable": []
+   },
+   "endpoint": "mail.spf_flatten",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.spf_parse",
+  "method": "POST",
+  "path": "/v1/mail/spf-parse",
+  "summary": "SPF record parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "record"
+  ],
+  "body_example": {
+   "record": "v=spf1 mx include:_spf.example.com ~all"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "all_qualifier": "~",
+    "dns_lookup_terms": 2,
+    "is_spf": true,
+    "notes": [
+     "Each include and redirect is counted once here; the records they point to can need more DNS lookups. The SPF check on a domain counts the whole tree."
+    ],
+    "record": "v=spf1 mx include:_spf.example.com ~all",
+    "redirect": null,
+    "syntax_errors": [],
+    "terms": [
+     {
+      "kind": "mechanism",
+      "name": "mx",
+      "qualifier": null,
+      "raw": "mx",
+      "value": null
+     },
+     {
+      "kind": "mechanism",
+      "name": "include",
+      "qualifier": null,
+      "raw": "include:_spf.example.com",
+      "value": "_spf.example.com"
+     },
+     {
+      "kind": "mechanism",
+      "name": "all",
+      "qualifier": "~",
+      "raw": "~all",
+      "value": null
+     }
+    ]
+   },
+   "endpoint": "mail.spf_parse",
+   "findings": [
+    {
+     "code": "SPF_SOFTFAIL_ALL",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "term": "~all"
+       }
+      ]
+     },
+     "explanation": "Receivers decide how to handle mail that does not match the policy.",
+     "message": "The SPF policy ends with softfail (~all).",
+     "recommendation": "Confirm that all legitimate senders are covered before changing the policy.",
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "mail.spoofable",
+  "method": "GET",
+  "path": "/v1/mail/spoofable",
+  "summary": "Email spoofing check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "dmarc_record_domain": "example.com",
+    "domain": "example.com",
+    "effective_policy": "reject",
+    "effective_subdomain_policy": "reject",
+    "enforcement": "full",
+    "gaps": [],
+    "notes": [
+     "This describes the domain's published policy, not whether forged mail gets through: the receiving server makes the final decision, and DKIM is not assessed."
+    ],
+    "pct": 100,
+    "spf_all_qualifier": "-",
+    "strength": "protected",
+    "test_mode": false
+   },
+   "endpoint": "mail.spoofable",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.tlsrpt",
+  "method": "GET",
+  "path": "/v1/mail/tlsrpt",
+  "summary": "TLS-RPT check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "name": "_smtp._tls.example.com",
+    "record": "v=TLSRPTv1; rua=mailto:tlsrpt@example.com",
+    "rua": [
+     "mailto:tlsrpt@example.com"
+    ]
+   },
+   "endpoint": "mail.tlsrpt",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "mail.tlsrpt_parse",
+  "method": "POST",
+  "path": "/v1/mail/tlsrpt-parse",
+  "summary": "TLS-RPT record parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "record"
+  ],
+  "body_example": {
+   "record": "v=TLSRPTv1; rua=mailto:tlsrpt@example.com,https://tlsrpt.example.com/v1"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "is_tlsrpt": true,
+    "notes": [
+     "Report addresses are not contacted; whether an https: endpoint accepts reports is not checked."
+    ],
+    "record": "v=TLSRPTv1; rua=mailto:tlsrpt@example.com,https://tlsrpt.example.com/v1",
+    "rua": [
+     "mailto:tlsrpt@example.com",
+     "https://tlsrpt.example.com/v1"
+    ],
+    "valid": true
+   },
+   "endpoint": "mail.tlsrpt_parse",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.caa",
+  "method": "GET",
+  "path": "/v1/dns/caa",
+  "summary": "CAA record check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "inherited": false,
+    "iodef": [
+     "mailto:security@example.com"
+    ],
+    "issuers": [
+     "letsencrypt.org"
+    ],
+    "record_name": "example.com",
+    "records": [
+     {
+      "critical": false,
+      "flags": 0,
+      "tag": "iodef",
+      "value": "mailto:security@example.com"
+     },
+     {
+      "critical": false,
+      "flags": 0,
+      "tag": "issue",
+      "value": "letsencrypt.org"
+     }
+    ],
+    "wildcard_issuers": [
+     "letsencrypt.org"
+    ]
+   },
+   "endpoint": "dns.caa",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.compare",
+  "method": "GET",
+  "path": "/v1/dns/compare",
+  "summary": "DNS resolver comparison",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "name",
+    "required": true,
+    "example": "example.com"
+   },
+   {
+    "name": "type",
+    "required": false,
+    "example": "A"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "answers": [
+     {
+      "error": null,
+      "rcode": "NOERROR",
+      "records": [
+       "192.0.2.10"
+      ],
+      "resolver": "cloudflare",
+      "ttl": 300
+     },
+     {
+      "error": null,
+      "rcode": "NOERROR",
+      "records": [
+       "192.0.2.10"
+      ],
+      "resolver": "google",
+      "ttl": 300
+     }
+    ],
+    "match": true,
+    "name": "example.com",
+    "type": "A"
+   },
+   "endpoint": "dns.compare",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "cloudflare,google",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.dnssec",
+  "method": "GET",
+  "path": "/v1/dns/dnssec",
+  "summary": "DNSSEC check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "dnskeys": [
+     {
+      "algorithm": 13,
+      "flags": 256,
+      "protocol": 3,
+      "role": "zsk"
+     },
+     {
+      "algorithm": 13,
+      "flags": 257,
+      "protocol": 3,
+      "role": "ksk"
+     }
+    ],
+    "domain": "example.com",
+    "ds": [
+     {
+      "algorithm": 13,
+      "digest_type": 2,
+      "key_tag": 2371
+     }
+    ],
+    "state": "secure",
+    "validated": true
+   },
+   "endpoint": "dns.dnssec",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.https_rr",
+  "method": "GET",
+  "path": "/v1/dns/https-rr",
+  "summary": "HTTPS record check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "alias_target": null,
+    "domain": "example.com",
+    "records": [
+     {
+      "alpn": [
+       "h3",
+       "h2"
+      ],
+      "ech": false,
+      "ipv4hint": [
+       "192.0.2.10"
+      ],
+      "ipv6hint": [
+       "2001:db8::10"
+      ],
+      "mandatory": [],
+      "mode": "service",
+      "no_default_alpn": false,
+      "other_keys": [],
+      "port": null,
+      "priority": 1,
+      "record": "1 . alpn=\"h3,h2\" ipv4hint=\"192.0.2.10\" ipv6hint=\"2001:db8::10\"",
+      "target": "."
+     }
+    ]
+   },
+   "endpoint": "dns.https_rr",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.idn",
+  "method": "GET",
+  "path": "/v1/dns/idn",
+  "summary": "IDN converter",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "name",
+    "required": true,
+    "example": "bücher.example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "ascii": "xn--bcher-kva.example.com",
+    "is_idn": true,
+    "labels": [
+     {
+      "ascii": "xn--bcher-kva",
+      "is_idn": true,
+      "scripts": [
+       "Latin"
+      ],
+      "unicode": "bücher"
+     },
+     {
+      "ascii": "example",
+      "is_idn": false,
+      "scripts": [
+       "Latin"
+      ],
+      "unicode": "example"
+     },
+     {
+      "ascii": "com",
+      "is_idn": false,
+      "scripts": [
+       "Latin"
+      ],
+      "unicode": "com"
+     }
+    ],
+    "name": "bücher.example.com",
+    "problems": [],
+    "unicode": "bücher.example.com",
+    "valid": true
+   },
+   "endpoint": "dns.idn",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.lookup",
+  "method": "GET",
+  "path": "/v1/dns/lookup",
+  "summary": "DNS lookup",
+  "price": {
+   "amount": 5000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "name",
+    "required": true,
+    "example": "example.com"
+   },
+   {
+    "name": "types",
+    "required": false,
+    "example": [
+     "A",
+     "MX"
+    ]
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "answers": [
+     {
+      "rcode": "NOERROR",
+      "records": [
+       "192.0.2.10"
+      ],
+      "ttl": 300,
+      "type": "A"
+     },
+     {
+      "rcode": "NOERROR",
+      "records": [
+       "10 mx1.example.com.",
+       "20 mx2.example.com."
+      ],
+      "ttl": 300,
+      "type": "MX"
+     }
+    ],
+    "name": "example.com"
+   },
+   "endpoint": "dns.lookup",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.ns",
+  "method": "GET",
+  "path": "/v1/dns/ns",
+  "summary": "Name server check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "hosts": [
+     {
+      "addresses": [
+       "192.0.2.53",
+       "2001:db8::53"
+      ],
+      "in_bailiwick": true,
+      "name": "ns1.example.com",
+      "resolved": true
+     },
+     {
+      "addresses": [
+       "198.51.100.53"
+      ],
+      "in_bailiwick": false,
+      "name": "ns2.example.net",
+      "resolved": true
+     }
+    ],
+    "ipv4_networks": [
+     "192.0.2.0/24",
+     "198.51.100.0/24"
+    ],
+    "ipv6_networks": [
+     "2001:db8::/48"
+    ],
+    "ns_count": 2
+   },
+   "endpoint": "dns.ns",
+   "findings": [
+    {
+     "code": "NS_IN_BAILIWICK",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "name": "example.com",
+        "ns": "ns1.example.com"
+       }
+      ]
+     },
+     "explanation": "A name server such as ns1.example.com for example.com can only be found through glue: address records the parent zone publishes with the delegation. Keep the glue at the registrar in step when the server's address changes.",
+     "message": "A name server lies inside the zone it serves and needs glue records.",
+     "recommendation": null,
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "dns.ns_provider",
+  "method": "GET",
+  "path": "/v1/dns/ns-provider",
+  "summary": "DNS provider lookup",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "list_version": "2026-10-28",
+    "ns_count": 2,
+    "providers": [],
+    "unknown": [
+     "ns1.example.com",
+     "ns2.example.net"
+    ]
+   },
+   "endpoint": "dns.ns_provider",
+   "findings": [
+    {
+     "code": "NS_PROVIDER_UNKNOWN",
+     "evidence": {
+      "count": 2,
+      "items": [
+       {
+        "name": "example.com",
+        "ns": "ns1.example.com"
+       },
+       {
+        "name": "example.com",
+        "ns": "ns2.example.net"
+       }
+      ]
+     },
+     "explanation": "The name server's name matches no provider on Lookproof's fixed, versioned list. It can be the domain's own server, a registrar's or a smaller provider's, so this is information, not a problem. The evidence names the server.",
+     "message": "A name server matches none of the DNS providers on the list.",
+     "recommendation": null,
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "dns.soa",
+  "method": "GET",
+  "path": "/v1/dns/soa",
+  "summary": "SOA record check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "soa": {
+     "expire": 1209600,
+     "minimum": 300,
+     "mname": "ns1.example.com",
+     "refresh": 7200,
+     "retry": 3600,
+     "rname": "hostmaster.example.com",
+     "serial": 2026102401,
+     "serial_format": "date"
+    },
+    "ttl": 300
+   },
+   "endpoint": "dns.soa",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.ttl",
+  "method": "GET",
+  "path": "/v1/dns/ttl",
+  "summary": "DNS TTL check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "notes": [
+     "Rows marked cache show how long the public resolver may still keep the record, not the TTL set in the zone: the configured TTL is normally at least that long. Exact TTLs come only from a DNSSEC-signed zone whose answers the resolver validated."
+    ],
+    "rows": [
+     {
+      "present": true,
+      "source": "cache",
+      "ttl": 300,
+      "type": "A"
+     },
+     {
+      "present": false,
+      "source": null,
+      "ttl": null,
+      "type": "AAAA"
+     },
+     {
+      "present": true,
+      "source": "cache",
+      "ttl": 300,
+      "type": "MX"
+     },
+     {
+      "present": true,
+      "source": "cache",
+      "ttl": 300,
+      "type": "NS"
+     },
+     {
+      "present": true,
+      "source": "cache",
+      "ttl": 300,
+      "type": "TXT"
+     },
+     {
+      "present": true,
+      "source": "cache",
+      "ttl": 300,
+      "type": "CAA"
+     },
+     {
+      "present": true,
+      "source": "rrsig",
+      "ttl": 3600,
+      "type": "SOA"
+     }
+    ],
+    "soa_minimum": 300,
+    "validated": false
+   },
+   "endpoint": "dns.ttl",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.txt_verification",
+  "method": "GET",
+  "path": "/v1/dns/txt-verification",
+  "summary": "Domain verification records",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "list_version": "2026-10-28",
+    "tokens": [
+     {
+      "prefix": "MS=",
+      "service": "Microsoft 365",
+      "value": "MS=ms48213705"
+     },
+     {
+      "prefix": "google-site-verification=",
+      "service": "Google",
+      "value": "google-site-verification=Xq3yZ2kLmN0pQrS7tUvWxY8zA1bC4dE5fG6hIjK9oP"
+     }
+    ],
+    "txt_count": 3
+   },
+   "endpoint": "dns.txt_verification",
+   "findings": [
+    {
+     "code": "TXT_VERIFICATION_FOUND",
+     "evidence": {
+      "count": 2,
+      "items": [
+       {
+        "name": "example.com",
+        "service": "Google"
+       },
+       {
+        "name": "example.com",
+        "service": "Microsoft 365"
+       }
+      ]
+     },
+     "explanation": "Services ask for a TXT record with a fixed prefix and a token to prove that someone controlled the domain. A token shows that the service was set up once; it does not prove that the service is in use today. The evidence names the services.",
+     "message": "The domain publishes verification records for one or more services.",
+     "recommendation": null,
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "dns.wildcard",
+  "method": "GET",
+  "path": "/v1/dns/wildcard",
+  "summary": "Wildcard DNS check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "answers": [
+     {
+      "rcode": "NXDOMAIN",
+      "records": [],
+      "ttl": null,
+      "type": "A"
+     },
+     {
+      "rcode": "NXDOMAIN",
+      "records": [],
+      "ttl": null,
+      "type": "AAAA"
+     },
+     {
+      "rcode": "NXDOMAIN",
+      "records": [],
+      "ttl": null,
+      "type": "TXT"
+     },
+     {
+      "rcode": "NXDOMAIN",
+      "records": [],
+      "ttl": null,
+      "type": "MX"
+     }
+    ],
+    "domain": "example.com",
+    "notes": [],
+    "probe_name": "lp-9fe3dd4ce833.example.com",
+    "wildcard": false
+   },
+   "endpoint": "dns.wildcard",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": "example",
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "dns.zone_lint",
+  "method": "POST",
+  "path": "/v1/dns/zone-lint",
+  "summary": "Zone file checker",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "origin",
+   "zone"
+  ],
+  "body_example": {
+   "origin": "example.com",
+   "zone": "$TTL 3600\n@       IN SOA  ns1.example.com. hostmaster.example.com. (\n                2026102701 ; serial\n                7200       ; refresh\n                3600       ; retry\n                1209600    ; expire\n                3600 )     ; minimum\n        IN NS   ns1\n        IN NS   ns2.example.net.\n        IN MX   10 mail\n        IN A    192.0.2.10\nns1     IN A    192.0.2.53\nmail    IN A    192.0.2.25\nwww     IN CNAME @\nwww     IN TXT  \"site-verification=abc123\"\n"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "default_ttl": 3600,
+    "name_count": 4,
+    "notes": [
+     "The zone is read as text only: nothing is looked up, and DNSSEC signatures are not verified."
+    ],
+    "origin": "example.com",
+    "problems": [],
+    "record_count": 9,
+    "soa": {
+     "expire": 1209600,
+     "minimum": 3600,
+     "mname": "ns1.example.com",
+     "refresh": 7200,
+     "retry": 3600,
+     "rname": "hostmaster.example.com",
+     "serial": 2026102701,
+     "serial_format": "date"
+    },
+    "types": [
+     {
+      "count": 3,
+      "type": "A"
+     },
+     {
+      "count": 2,
+      "type": "NS"
+     },
+     {
+      "count": 1,
+      "type": "CNAME"
+     },
+     {
+      "count": 1,
+      "type": "MX"
+     },
+     {
+      "count": 1,
+      "type": "SOA"
+     },
+     {
+      "count": 1,
+      "type": "TXT"
+     }
+    ]
+   },
+   "endpoint": "dns.zone_lint",
+   "findings": [
+    {
+     "code": "ZONE_CNAME_WITH_OTHER_DATA",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "owner": "www.example.com",
+        "types": "TXT"
+       }
+      ]
+     },
+     "explanation": "A name with a CNAME may hold no other data except DNSSEC records (RFC 1034 section 3.6.2, RFC 2181 section 10.1). Resolvers then answer inconsistently and many loaders refuse the zone. The evidence names the other types.",
+     "message": "A name has a CNAME and other records at the same time.",
+     "recommendation": "Keep either the CNAME or the other records for that name.",
+     "severity": "error"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "error"
+  }
+ },
+ {
+  "id": "tls.certificate",
+  "method": "GET",
+  "path": "/v1/tls/certificate",
+  "summary": "TLS certificate check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "address_family": "ipv4",
+    "chain": [
+     {
+      "issuer": "CN=Example Issuing CA",
+      "subject": "CN=example.com"
+     },
+     {
+      "issuer": "CN=Example Issuing CA",
+      "subject": "CN=Example Issuing CA"
+     }
+    ],
+    "cipher": "TLS_AES_256_GCM_SHA384",
+    "days_remaining": 36,
+    "domain": "example.com",
+    "hostname_match": true,
+    "issuer": "CN=Example Issuing CA",
+    "key_bits": 256,
+    "key_type": "ec",
+    "not_after": "2026-11-30T00:00:00Z",
+    "not_before": "2026-09-01T00:00:00Z",
+    "san": [
+     "example.com",
+     "www.example.com"
+    ],
+    "serial_number": "5ec0de",
+    "signature_algorithm": "ecdsa-with-SHA256",
+    "subject_cn": "example.com",
+    "tls_version": "TLSv1.3",
+    "trusted": true,
+    "untrusted_reason": null
+   },
+   "endpoint": "tls.certificate",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "tls.csr_decode",
+  "method": "POST",
+  "path": "/v1/tls/csr-decode",
+  "summary": "CSR decoder",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "pem"
+  ],
+  "body_example": {
+   "pem": "-----BEGIN CERTIFICATE REQUEST-----\nMIIBDzCBtgIBADAaMRgwFgYDVQQDDA93d3cuZXhhbXBsZS5jb20wWTATBgcqhkjO\nPQIBBggqhkjOPQMBBwNCAASYaBFVYf3ODOTflUCxvFDsM5JYUQi+lX/NiQHXhj8i\neWCINKAp3k2MFrjAsCXIYzDZt9kRgg8v6m4v7tBVmhQsoDowOAYJKoZIhvcNAQkO\nMSswKTAnBgNVHREEIDAegg93d3cuZXhhbXBsZS5jb22CC2V4YW1wbGUuY29tMAoG\nCCqGSM49BAMCA0gAMEUCID4KBezMJNy36Sj8p9NoYQDTus6ysKWT7yLaOxm5Vfa2\nAiEApYG7bF7p3rBwf7RghWBn+709OKTRM6jQhTmKnd96XXA=\n-----END CERTIFICATE REQUEST-----\n"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "decoded": true,
+    "key_bits": 256,
+    "key_type": "ec",
+    "notes": [
+     "A request is only what its owner asks for: the CA decides which names and key usages the certificate gets."
+    ],
+    "omitted": [],
+    "san_count": 2,
+    "san_dns": [
+     "www.example.com",
+     "example.com"
+    ],
+    "san_ip": [],
+    "signature_algorithm": "ecdsa-with-SHA256",
+    "signature_valid": true,
+    "subject": "CN=www.example.com",
+    "subject_cn": "www.example.com"
+   },
+   "endpoint": "tls.csr_decode",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "tls.pem_decode",
+  "method": "POST",
+  "path": "/v1/tls/pem-decode",
+  "summary": "PEM certificate decoder",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "pem"
+  ],
+  "body_example": {
+   "pem": "-----BEGIN CERTIFICATE-----\nMIIBqjCCAVCgAwIBAgIDDoo/MAoGCCqGSM49BAMCMB0xGzAZBgNVBAMMEkV4YW1w\nbGUgSXNzdWluZyBDQTAeFw0yNjA5MDEwMDAwMDBaFw0yNjExMzAwMDAwMDBaMDAx\nGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGA1UECgwLRXhhbXBsZSBMdGQw\nWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATyMmt7KcF7ouU025TiogjNkCQ2iiS/\n4t5guVuIjznTSD3p0AA45RGsaR10XOStJvi9BN4ruU9SHi9OkKpyP7Y7o2wwajAM\nBgNVHRMBAf8EAjAAMEUGA1UdEQQ+MDyCD3d3dy5leGFtcGxlLmNvbYILZXhhbXBs\nZS5jb22HBMAAAgqBFmhvc3RtYXN0ZXJAZXhhbXBsZS5jb20wEwYDVR0lBAwwCgYI\nKwYBBQUHAwEwCgYIKoZIzj0EAwIDSAAwRQIhAN6TOxiBdfALdsoU3cuapoJrFFm1\neOCqJSG8/3SW9/LOAiAaGfFCWjWof5LnsIGPntTa6TGwqFHv/wxuOpq37L+PNw==\n-----END CERTIFICATE-----\n"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "days_remaining": 36,
+    "decoded": true,
+    "extended_key_usage": [
+     "serverAuth"
+    ],
+    "is_ca": false,
+    "issuer": "CN=Example Issuing CA",
+    "key_bits": 256,
+    "key_type": "ec",
+    "key_usage": [],
+    "not_after": "2026-11-30T00:00:00Z",
+    "not_before": "2026-09-01T00:00:00Z",
+    "notes": [
+     "Nothing is fetched: the chain, revocation and trust in the issuer are not checked."
+    ],
+    "omitted": [
+     "san_email"
+    ],
+    "path_length": null,
+    "san_count": 4,
+    "san_dns": [
+     "www.example.com",
+     "example.com"
+    ],
+    "san_ip": [
+     "192.0.2.10"
+    ],
+    "self_issued": false,
+    "self_signed": false,
+    "serial_number": "e8a3f",
+    "sha1_fingerprint": "75712bf2227c215c28a2e214ed2f79c007d70769",
+    "sha256_fingerprint": "4d0289557971058d3eeee0dea9449d2da6709778c69c92849f2996e4f3120227",
+    "signature_algorithm": "ecdsa-with-SHA256",
+    "subject": "O=Example Ltd,CN=www.example.com",
+    "subject_cn": "www.example.com",
+    "validity_days": 90,
+    "version": "v3"
+   },
+   "endpoint": "tls.pem_decode",
+   "findings": [
+    {
+     "code": "PEM_PERSONAL_DATA_OMITTED",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "fields": "san_email"
+       }
+      ]
+     },
+     "explanation": "The block holds an email address (emailAddress in a name, or an rfc822Name in the subject alternative names) or a name type that can identify a person, such as a user principal name. Lookproof never returns or stores those. The evidence lists which kinds were present; all other fields are shown.",
+     "message": "Email addresses and personal name types were left out of the result.",
+     "recommendation": null,
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "http.cookie_parse",
+  "method": "POST",
+  "path": "/v1/http/cookie-parse",
+  "summary": "Set-Cookie parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "header"
+  ],
+  "body_example": {
+   "header": "Set-Cookie: __Secure-session=3f9a1c7e5b2d; Domain=example.com; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=86400"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "attributes": [
+     "domain",
+     "path",
+     "secure",
+     "httponly",
+     "samesite",
+     "max-age"
+    ],
+    "domain": "example.com",
+    "expires": null,
+    "header_name": "set-cookie",
+    "http_only": true,
+    "lifetime_days": 1,
+    "max_age": 86400,
+    "name": "__Secure-session",
+    "notes": [
+     "Only the pasted text is read; whether a site sends this header is not checked."
+    ],
+    "partitioned": false,
+    "path": "/",
+    "persistent": true,
+    "prefix": "__Secure-",
+    "same_site": "lax",
+    "secure": true,
+    "value_length": 12
+   },
+   "endpoint": "http.cookie_parse",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "http.csp_parse",
+  "method": "POST",
+  "path": "/v1/http/csp-parse",
+  "summary": "CSP header parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "header"
+  ],
+  "body_example": {
+   "header": "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.example.com; object-src 'none'; base-uri 'self'"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "header_name": "content-security-policy",
+    "notes": [
+     "Only the pasted text is read; whether a site sends this header is not checked."
+    ],
+    "policies": [
+     {
+      "directives": [
+       {
+        "name": "default-src",
+        "sources": [
+         "'self'"
+        ]
+       },
+       {
+        "name": "script-src",
+        "sources": [
+         "'self'",
+         "'unsafe-inline'",
+         "https://cdn.example.com"
+        ]
+       },
+       {
+        "name": "object-src",
+        "sources": [
+         "'none'"
+        ]
+       },
+       {
+        "name": "base-uri",
+        "sources": [
+         "'self'"
+        ]
+       }
+      ]
+     }
+    ],
+    "report_only": false
+   },
+   "endpoint": "http.csp_parse",
+   "findings": [
+    {
+     "code": "CSP_UNSAFE_INLINE",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "directive": "script-src",
+        "policy": "1",
+        "source": "'unsafe-inline'"
+       }
+      ]
+     },
+     "explanation": "The script-src directive (or default-src, when there is no script-src) allows 'unsafe-inline' without a nonce or hash, or allows 'unsafe-eval'. Injected inline scripts can then run, which removes most of the protection the policy gives against cross-site scripting.",
+     "message": "The Content Security Policy allows inline or eval'd scripts.",
+     "recommendation": "Move inline scripts to files or allow them with nonces or hashes, and drop 'unsafe-eval' once no code needs eval().",
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "http.hsts_parse",
+  "method": "POST",
+  "path": "/v1/http/hsts-parse",
+  "summary": "HSTS header parser",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "header"
+  ],
+  "body_example": {
+   "header": "max-age=63072000; includeSubDomains; preload"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "directives": [
+     "max-age",
+     "includesubdomains",
+     "preload"
+    ],
+    "header_name": null,
+    "include_subdomains": true,
+    "max_age": 63072000,
+    "notes": [
+     "Only the pasted text is read; whether a site sends this header is not checked.",
+     "hstspreload.org also needs the site to redirect http to https on the same host and to send the header on the registrable domain over HTTPS; that needs a live check."
+    ],
+    "preload": true,
+    "preload_eligible": true,
+    "preload_missing": [],
+    "valid": true
+   },
+   "endpoint": "http.hsts_parse",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "http.security_headers",
+  "method": "GET",
+  "path": "/v1/http/security-headers",
+  "summary": "Security headers check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "domain",
+    "required": true,
+    "example": "example.com"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "domain": "example.com",
+    "from_http": {
+     "error": null,
+     "final_status": 200,
+     "final_url": "https://example.com/",
+     "hops": [
+      {
+       "location": "https://example.com/",
+       "status": 301,
+       "url": "http://example.com/"
+      },
+      {
+       "location": null,
+       "status": 200,
+       "url": "https://example.com/"
+      }
+     ],
+     "start_url": "http://example.com/"
+    },
+    "from_https": {
+     "error": null,
+     "final_status": 200,
+     "final_url": "https://example.com/",
+     "hops": [
+      {
+       "location": null,
+       "status": 200,
+       "url": "https://example.com/"
+      }
+     ],
+     "start_url": "https://example.com/"
+    },
+    "headers": {
+     "content_security_policy": "default-src 'self'; frame-ancestors 'none'",
+     "content_security_policy_report_only": null,
+     "cookies": [
+      {
+       "http_only": true,
+       "name": "session",
+       "same_site": "lax",
+       "secure": true
+      }
+     ],
+     "cross_origin_opener_policy": "same-origin",
+     "permissions_policy": "camera=(), microphone=()",
+     "referrer_policy": "strict-origin-when-cross-origin",
+     "strict_transport_security": {
+      "include_subdomains": true,
+      "max_age": 63072000,
+      "preload": true,
+      "raw": "max-age=63072000; includeSubDomains; preload",
+      "valid": true
+     },
+     "x_content_type_options": "nosniff",
+     "x_frame_options": null
+    }
+   },
+   "endpoint": "http.security_headers",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "ip.cidr",
+  "method": "GET",
+  "path": "/v1/ip/cidr",
+  "summary": "CIDR calculator",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "cidr",
+    "required": true,
+    "example": "192.0.2.5/24"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "first": "192.0.2.0",
+    "host_bits_set": true,
+    "hostmask": "0.0.0.255",
+    "input": "192.0.2.5/24",
+    "last": "192.0.2.255",
+    "netmask": "255.255.255.0",
+    "network": "192.0.2.0/24",
+    "prefix": 24,
+    "size": "256",
+    "version": 4
+   },
+   "endpoint": "ip.cidr",
+   "findings": [
+    {
+     "code": "IP_HOST_BITS_SET",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "input": "192.0.2.5/24",
+        "network": "192.0.2.0/24"
+       }
+      ]
+     },
+     "explanation": "The address before the slash is not the first address of the network, as in 192.0.2.5/24. The network is 192.0.2.0/24; many configuration files reject the other form or read it as a single host.",
+     "message": "The network was given with host bits set.",
+     "recommendation": "Write the network with its first address, as shown in the result.",
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "ip.contains",
+  "method": "POST",
+  "path": "/v1/ip/contains",
+  "summary": "IP in CIDR check",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [],
+  "body_fields": [
+   "cidrs",
+   "ip"
+  ],
+  "body_example": {
+   "cidrs": [
+    "192.0.2.0/24",
+    "198.51.100.0/24",
+    "2001:db8::/32"
+   ],
+   "ip": "192.0.2.10"
+  },
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "contained": true,
+    "ip": "192.0.2.10",
+    "matches": [
+     "192.0.2.0/24"
+    ],
+    "results": [
+     {
+      "cidr": "192.0.2.0/24",
+      "contains": true
+     },
+     {
+      "cidr": "198.51.100.0/24",
+      "contains": false
+     },
+     {
+      "cidr": "2001:db8::/32",
+      "contains": false
+     }
+    ]
+   },
+   "endpoint": "ip.contains",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "ip.info",
+  "method": "GET",
+  "path": "/v1/ip/info",
+  "summary": "IP address info",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "ip",
+    "required": true,
+    "example": "192.0.2.1"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "compressed": "192.0.2.1",
+    "exploded": "192.0.2.1",
+    "ip": "192.0.2.1",
+    "ipv4_mapped": null,
+    "is_global": false,
+    "reverse_pointer": "1.2.0.192.in-addr.arpa",
+    "scope": "documentation",
+    "scope_source": {
+     "network": "192.0.2.0/24",
+     "registry": "IANA IPv4 Special-Purpose Address Registry",
+     "rfc": "RFC 5737"
+    },
+    "version": 4
+   },
+   "endpoint": "ip.info",
+   "findings": [
+    {
+     "code": "IP_NOT_GLOBAL",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "ip": "192.0.2.1",
+        "scope": "documentation"
+       }
+      ]
+     },
+     "explanation": "The address is in a special-purpose block (IANA's IPv4 and IPv6 Special-Purpose Address Registries), for example private, loopback, link-local, shared address space or documentation. The scope and its RFC are in the result. Such an address cannot be reached from the public internet.",
+     "message": "The address is not globally routable.",
+     "recommendation": null,
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
+  }
+ },
+ {
+  "id": "ip.range_to_cidr",
+  "method": "GET",
+  "path": "/v1/ip/range-to-cidr",
+  "summary": "IP range to CIDR",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "start",
+    "required": true,
+    "example": "192.0.2.10"
+   },
+   {
+    "name": "end",
+    "required": true,
+    "example": "192.0.2.20"
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "cidrs": [
+     "192.0.2.10/31",
+     "192.0.2.12/30",
+     "192.0.2.16/30",
+     "192.0.2.20/32"
+    ],
+    "end": "192.0.2.20",
+    "size": "11",
+    "start": "192.0.2.10",
+    "version": 4
+   },
+   "endpoint": "ip.range_to_cidr",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ },
+ {
+  "id": "ip.subnets",
+  "method": "GET",
+  "path": "/v1/ip/subnets",
+  "summary": "Subnet calculator",
+  "price": {
+   "amount": 2000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "cidr",
+    "required": true,
+    "example": "192.0.2.0/24"
+   },
+   {
+    "name": "prefix",
+    "required": true,
+    "example": 26
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "count": 4,
+    "network": "192.0.2.0/24",
+    "new_prefix": 26,
+    "subnets": [
+     "192.0.2.0/26",
+     "192.0.2.64/26",
+     "192.0.2.128/26",
+     "192.0.2.192/26"
+    ]
+   },
+   "endpoint": "ip.subnets",
+   "findings": [],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "offline"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "ok"
+  }
+ }
+]
