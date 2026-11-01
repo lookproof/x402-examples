@@ -21,6 +21,23 @@ If one section of a check fails (for example a DNS timeout), it is reported as `
 
 The first run for a domain records a baseline and sends no alert.
 
+## A cheaper alternative: $0.05 per domain
+
+The monitor uses `/v1/domain/health` ($0.08) because one call covers everything it compares, and DKIM selector discovery means you do not need to know your selectors. If you know them, two smaller calls cover the same four checks for $0.05 per domain:
+
+| Call | Price | Covers |
+|---|---|---|
+| `GET /v1/mail/check?domain=...&dkim_selectors=s1&dkim_selectors=s2` | $0.03 | MX, SPF, DMARC, and DKIM for the selectors you pass (up to 5) |
+| `GET /v1/mail/mta-sts?domain=...` | $0.02 | MTA-STS and TLS-RPT |
+
+Trade-offs:
+
+- You must list your DKIM selectors (look at the `DKIM-Signature: ... s=` header of a mail you sent). A selector you do not list is never checked, so a new selector added by your mail provider goes unnoticed.
+- DNSSEC, PTR, BIMI and CAA are not included (the monitor does not compare them anyway).
+- Two payments per domain instead of one.
+
+To switch, change `quote()` and `pay_and_check()` in `monitor.py` to make both calls, and build the posture from the `mail.check` result (`data.spf`, `data.dmarc`, and `data.dkim`, which is a list of keys rather than `{"found": [...]}`) plus the `mail.mta_sts` result (`data`). Response formats are in [`../docs/endpoints.md`](../docs/endpoints.md). `mail.check` lists sections that failed in `data.incomplete`; treat those like a failed section here (unknown, previous value kept). Set `EXPECTED_PRICE` to the price of each call.
+
 ## Setup
 
 Use a dedicated wallet with a few dollars of USDC on Base mainnet. Never your main wallet.
@@ -45,6 +62,7 @@ Copy [`../.env.example`](../.env.example) to `../.env` and fill in the monitor s
 | `X402_PAY` | off | Without `X402_PAY=1` (or `--pay`), the monitor shows the cost per run and stops. |
 | `PRIVATE_KEY_FILE` / `PRIVATE_KEY` | | The wallet key: a file only you can read (recommended), or the key itself. |
 | `MAX_SPEND_USD` | `0.10` | Spending cap per run. A run that would cost more is refused before anything is paid. Set it to at least $0.08 times the number of domains. |
+| `PAYTO_ALLOWLIST` | empty | Optional comma-separated addresses; a 402 asking for payment to any other address is refused. See [pinning the receiving address](../README.md#pinning-the-receiving-address-payto_allowlist). |
 | `STATE_FILE` | `.monitor-state.json` here | Latest result per domain (public DNS data only, mode 600). |
 | `ALERT_ON` | `change` | `change` alerts on any difference; `weaker` only on weaker or unknown. |
 | `DELIVERY` | `stdout` | Comma-separated: `stdout`, `discord`, `telegram`, `email`. |

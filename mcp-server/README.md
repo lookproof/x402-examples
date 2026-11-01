@@ -22,7 +22,20 @@ Every tool description states its price, so the agent can see what a call costs 
 | `mx` | $0.01 | | |
 | `spoofable` | $0.01 | | |
 
-`get_spending` is free and shows what the session has spent and how much budget is left. The other 24 endpoints (IP tools, zone lint, certificate and header parsers, bulk mail checks) are in [`../docs/endpoints.md`](../docs/endpoints.md); add a tool for one with a few lines in `server.py`.
+`get_spending` is free and shows what the session has spent and how much budget is left.
+
+## Endpoints without a tool
+
+Lookproof has 47 paid endpoints. This server exposes the 23 an agent is most likely to need for questions about a domain's DNS and mail security, because every extra tool costs context and makes the agent's choice harder. The other 24, and why they are left out:
+
+| Endpoints | Why left out |
+|---|---|
+| `POST /v1/mail/check/bulk` | Up to 20 domains in one paid call ($0.024 each, up to $0.48): too easy for an agent to spend the session budget at once. Use it from a script. |
+| `GET /v1/dns/soa`, `/v1/dns/ttl`, `/v1/dns/wildcard`, `/v1/dns/https-rr`, `/v1/dns/compare`, `/v1/dns/ns-provider`, `/v1/dns/txt-verification`, `/v1/mail/ptr` | Specialised DNS diagnostics. `domain_health` (which includes reverse DNS of the mail servers) and `dns_lookup` answer the common questions. |
+| `GET /v1/ip/info`, `/v1/ip/cidr`, `/v1/ip/subnets`, `/v1/ip/range-to-cidr`, `POST /v1/ip/contains`, `GET /v1/dns/idn` | Offline IP arithmetic and IDN conversion. An agent can do this itself without paying. |
+| `POST /v1/dns/zone-lint`, `/v1/tls/pem-decode`, `/v1/tls/csr-decode`, `/v1/http/csp-parse`, `/v1/http/hsts-parse`, `/v1/http/cookie-parse`, `/v1/mail/mta-sts-parse`, `/v1/mail/bimi-parse`, `/v1/mail/tlsrpt-parse` | Parsers for text the user pastes. They fit a script better than an agent session, and pasted cookies or zone files can contain data the user may not want to send. `spf_parse` and `dmarc_parse` are included as examples of this kind of tool. |
+
+All of them are in [`../docs/endpoints.md`](../docs/endpoints.md). To add one, copy a tool in `server.py`, set its path and price, and run `python server.py --check`.
 
 ## Setup
 
@@ -45,6 +58,7 @@ nano ~/.lookproof-wallet.key        # paste the private key, save
 | `X402_PAY` | off | Without `X402_PAY=1`, every tool runs as a dry run: it reports the price and returns no data. |
 | `PRIVATE_KEY_FILE` | | Path to a file with the wallet's private key (recommended). It must not be readable by other users. |
 | `PRIVATE_KEY` | | The key itself, if you prefer an environment variable. |
+| `PAYTO_ALLOWLIST` | empty | Optional comma-separated addresses; a 402 asking for payment to any other address is refused before signing. See [pinning the receiving address](../README.md#pinning-the-receiving-address-payto_allowlist). |
 | `MAX_SPEND_USD` | `0.10` | Spending cap for the session (one server process). Calls beyond it are refused, not paid. |
 
 Each payment is locked to the price, asset (USDC), network (Base, `eip155:8453`) and `payTo` address the API quoted for that call, and a tool refuses to pay more than the price in its description. If a call fails after the payment was signed, it still counts against the cap and is reported as "possibly paid".
