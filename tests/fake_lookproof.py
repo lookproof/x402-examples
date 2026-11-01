@@ -2,7 +2,7 @@
 
 It answers like Lookproof's public API: an unpaid request gets 402 with a PAYMENT-REQUIRED
 header (x402 v2, USDC on Base, prices from docs/endpoints.json); a request with a
-PAYMENT-SIGNATURE gets the registry's example response and a PAYMENT-RESPONSE header with a
+PAYMENT-SIGNATURE gets the documented example response and a PAYMENT-RESPONSE header with a
 fake transaction hash. Nothing touches a chain: the signature is decoded and its EIP-712
 signer recovered, but nothing is settled. Use a throwaway key with it.
 
