@@ -38,6 +38,14 @@ function loadPrivateKey(): `0x${string}` {
   return key!.replace(/^(0x)?/, "0x") as `0x${string}`; // accept keys with or without 0x
 }
 
+// Optional PAYTO_ALLOWLIST: comma-separated addresses the script may pay. Empty = any payTo.
+function paytoAllowlist(): Set<string> {
+  const entries = (process.env.PAYTO_ALLOWLIST ?? "").split(",").map((a) => a.trim()).filter(Boolean);
+  const bad = entries.find((a) => !/^0x[0-9a-fA-F]{40}$/.test(a));
+  if (bad !== undefined) stop(`PAYTO_ALLOWLIST has an entry that is not an address: ${JSON.stringify(bad)}`);
+  return new Set(entries.map((a) => a.toLowerCase()));
+}
+
 // Unpaid request -> 402. The PAYMENT-REQUIRED header is base64 JSON with the price.
 const unpaid = await fetch(URL_);
 const header = unpaid.headers.get("PAYMENT-REQUIRED");
@@ -48,6 +56,8 @@ const quote = accepts.find(
 ) ?? stop("The 402 offers no USDC payment on Base mainnet. Not paying.");
 const price = Number(quote.amount) / 1e6; // USDC has 6 decimals
 console.log(`Price: $${price.toFixed(3)} USDC on ${quote.network}, payTo ${quote.payTo}`);
+const allow = paytoAllowlist();
+if (allow.size > 0 && !allow.has(quote.payTo.toLowerCase())) stop(`payTo ${quote.payTo} is not in PAYTO_ALLOWLIST. Not paying.`);
 
 if (!PAY) {
   console.log("Dry run: nothing paid. Re-run with --pay to pay.");

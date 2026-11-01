@@ -28,7 +28,8 @@ OTHER_PAY_TO = "0x1111111111111111111111111111111111111111"
 @pytest.fixture()
 def api(monkeypatch):
     for k in ("FAKE_PRICE_FACTOR", "FAKE_PAY_TO", "FAKE_SWITCH_PAY_TO", "FAKE_STATUS", "FAKE_DATA_FILE",
-              "X402_PAY", "PRIVATE_KEY", "PRIVATE_KEY_FILE", "MAX_SPEND_USD", "DOMAINS", "DOMAINS_FILE"):
+              "X402_PAY", "PRIVATE_KEY", "PRIVATE_KEY_FILE", "MAX_SPEND_USD", "DOMAINS", "DOMAINS_FILE",
+              "PAYTO_ALLOWLIST", "STATE_FILE", "ALERT_ON", "DELIVERY"):
         monkeypatch.delenv(k, raising=False)
     fake_lookproof.reset()
     server = fake_lookproof.serve(0)
@@ -310,3 +311,54 @@ def test_endpoints_doc_has_no_em_dashes():
     for f in ("docs/endpoints.md", "README.md", "quickstart/README.md", "domain-monitor/README.md",
               "mcp-server/README.md"):
         assert "\u2014" not in (ROOT / f).read_text(), f
+
+
+# --- PAYTO_ALLOWLIST ----------------------------------------------------------
+
+FAKE_PAY_TO = "0x000000000000000000000000000000000000dEaD"
+
+
+def test_quickstart_payto_allowlist(api, key):
+    r = run(QS, "--pay", env={"PAYTO_ALLOWLIST": f"{OTHER_PAY_TO}, {FAKE_PAY_TO.lower()}"})
+    assert r.returncode == 0, r.stderr
+    r = run(QS, env={"PAYTO_ALLOWLIST": OTHER_PAY_TO})
+    assert r.returncode == 1 and "is not in PAYTO_ALLOWLIST" in r.stderr
+    r = run(QS, "--pay", env={"PAYTO_ALLOWLIST": "0x123"})
+    assert r.returncode == 1 and "not an address" in r.stderr
+    assert len(fake_lookproof.paid_log) == 1
+
+
+@pytest.mark.skipif(not (ROOT / "quickstart/typescript/node_modules").exists() or not shutil.which("node"),
+                    reason="run npm install in quickstart/typescript first")
+def test_typescript_payto_allowlist(api, key):
+    ts = ROOT / "quickstart/typescript"
+    r = subprocess.run(["node", "quickstart.ts", "--pay"], cwd=ts, capture_output=True, text=True, timeout=60,
+                       env={**os.environ, "PAYTO_ALLOWLIST": OTHER_PAY_TO})
+    assert r.returncode == 1 and "is not in PAYTO_ALLOWLIST" in r.stderr
+    assert fake_lookproof.paid_log == []
+
+
+def test_monitor_payto_allowlist(api, key, tmp_path):
+    env = {"DOMAINS": "example.com", "STATE_FILE": str(tmp_path / "s.json"), "PAYTO_ALLOWLIST": OTHER_PAY_TO}
+    r = run(MON, "--pay", env=env)
+    assert r.returncode == 1 and "is not in PAYTO_ALLOWLIST" in r.stderr
+    assert fake_lookproof.paid_log == []
+
+
+def test_mcp_payto_allowlist(api, key):
+    _, (res,) = mcp_run({"X402_PAY": "1", "PRIVATE_KEY": key, "PAYTO_ALLOWLIST": OTHER_PAY_TO},
+                        [("spf", {"domain": "example.com"})])
+    assert "not in PAYTO_ALLOWLIST" in res["error"]
+    _, (res,) = mcp_run({"X402_PAY": "1", "PRIVATE_KEY": key, "PAYTO_ALLOWLIST": FAKE_PAY_TO},
+                        [("spf", {"domain": "example.com"})])
+    assert res["cost_usd"] == 0.01
+    assert len(fake_lookproof.paid_log) == 1
+
+
+def test_mcp_readme_accounts_for_every_endpoint():
+    import re
+    paths = {e["path"] for e in json.loads((ROOT / "docs/endpoints.json").read_text())}
+    tools = set(re.findall(r'await call\("(?:GET|POST)", "([^"]+)"', SERVER.read_text()))
+    section = (ROOT / "mcp-server/README.md").read_text().split("## Endpoints without a tool")[1].split("\n## ")[0]
+    omitted = set(re.findall(r"(/v1/[a-z0-9/-]+)", section))
+    assert tools | omitted == paths and not tools & omitted

@@ -10,6 +10,7 @@ network and payTo), refuses anything above MAX_SPEND_USD and prints what the run
 import asyncio
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -54,6 +55,15 @@ def load_private_key() -> str:
     return key
 
 
+def payto_allowlist() -> set[str]:
+    """Optional PAYTO_ALLOWLIST: comma-separated addresses the script may pay. Empty = any payTo."""
+    entries = [a.strip() for a in (os.getenv("PAYTO_ALLOWLIST") or "").split(",") if a.strip()]
+    bad = [a for a in entries if not re.fullmatch(r"0x[0-9a-fA-F]{40}", a)]
+    if bad:
+        stop(f"PAYTO_ALLOWLIST has an entry that is not an address: {bad[0]!r}")
+    return {a.lower() for a in entries}
+
+
 async def quote(params: dict):
     """Unpaid request -> 402. Returns the USDC-on-Base payment option; anything else is refused."""
     async with httpx.AsyncClient(timeout=30) as http:
@@ -79,6 +89,9 @@ async def main() -> None:
     q = await quote(params)
     price = int(q.amount) / 1e6  # USDC has 6 decimals
     print(f"Price: ${price:.3f} USDC on {q.network}, payTo {q.pay_to}")
+    allow = payto_allowlist()
+    if allow and q.pay_to.lower() not in allow:
+        stop(f"payTo {q.pay_to} is not in PAYTO_ALLOWLIST. Not paying.")
     if not PAY:
         return print("Dry run: nothing paid. Re-run with --pay to pay.")
     if price > MAX_SPEND:

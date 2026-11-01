@@ -94,6 +94,15 @@ def load_private_key() -> str:
     return key
 
 
+def payto_allowlist() -> set[str]:
+    """Optional PAYTO_ALLOWLIST: comma-separated addresses the script may pay. Empty = any payTo."""
+    entries = [a.strip() for a in (os.getenv("PAYTO_ALLOWLIST") or "").split(",") if a.strip()]
+    bad = [a for a in entries if not re.fullmatch(r"0x[0-9a-fA-F]{40}", a)]
+    if bad:
+        stop(f"PAYTO_ALLOWLIST has an entry that is not an address: {bad[0]!r}")
+    return {a.lower() for a in entries}
+
+
 # --- Posture: the parts of a result that are compared between runs ----------
 
 SPF_ALL = {"-": (3, "-all (fail)"), "~": (2, "~all (softfail)"), "?": (1, "?all (neutral)"),
@@ -350,6 +359,9 @@ async def run(domains: list[str]) -> int:
     total = price * len(domains)
     print(f"{len(domains)} domains x ${price:.3f} = ${total:.3f} per run "
           f"(${total * 30:.2f} per 30 days if run daily). USDC on {first.network}, payTo {first.pay_to}")
+    allow = payto_allowlist()
+    if allow and first.pay_to.lower() not in allow:
+        stop(f"payTo {first.pay_to} is not in PAYTO_ALLOWLIST. Not paying.")
     if not PAY:
         print("Dry run: nothing paid. Re-run with --pay (or X402_PAY=1) to check the domains.")
         return 0
@@ -372,6 +384,9 @@ async def run(domains: list[str]) -> int:
             failures.append(f"{domain}: not checked, {clean(e)}")
             continue
         p = int(q.amount) / 1e6
+        if allow and q.pay_to.lower() not in allow:
+            failures.append(f"{domain}: not checked, payTo {q.pay_to} is not in PAYTO_ALLOWLIST")
+            continue
         if p > EXPECTED_PRICE + 1e-9 or spent + p > MAX_SPEND + 1e-9:
             failures.append(f"{domain}: not checked, would exceed the price or MAX_SPEND_USD")
             continue
