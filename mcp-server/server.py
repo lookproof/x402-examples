@@ -10,6 +10,7 @@ Run:  python server.py          (stdio, for Claude Code / Claude Desktop)
 """
 import asyncio
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -43,6 +44,17 @@ def _load_private_key() -> str | None:
         key = p.read_text().strip()
     return key or None
 
+
+def _payto_allowlist() -> set[str]:
+    """Optional PAYTO_ALLOWLIST: comma-separated addresses the server may pay. Empty = any payTo."""
+    entries = [a.strip() for a in (os.getenv("PAYTO_ALLOWLIST") or "").split(",") if a.strip()]
+    bad = [a for a in entries if not re.fullmatch(r"0x[0-9a-fA-F]{40}", a)]
+    if bad:
+        sys.exit(f"PAYTO_ALLOWLIST has an entry that is not an address: {bad[0]!r}")
+    return {a.lower() for a in entries}
+
+
+PAYTO_ALLOWLIST = _payto_allowlist()
 
 mcp = MCPServer(
     "lookproof",
@@ -104,6 +116,8 @@ async def call(method: str, path: str, advertised: float, params: dict | None = 
     price = _usd(quote)
     if price > advertised + 1e-9:
         return {"error": f"Refused: {path} now costs ${price:.3f}, more than the advertised ${advertised:.3f}."}
+    if PAYTO_ALLOWLIST and quote.pay_to.lower() not in PAYTO_ALLOWLIST:
+        return {"error": f"Refused: {path} asks for payment to {quote.pay_to}, which is not in PAYTO_ALLOWLIST."}
     if not PAY:
         return {"dry_run": True, "would_cost_usd": price, "network": quote.network, "pay_to": quote.pay_to,
                 "note": "Dry run, nothing paid and no data. The user can set X402_PAY=1 to enable payments."}

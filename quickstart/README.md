@@ -61,6 +61,7 @@ export PRIVATE_KEY_FILE=~/.lookproof-wallet.key
 |---|---|---|
 | `--pay` or `X402_PAY=1` | off | Without it, the script only shows the price (dry run). |
 | `MAX_SPEND_USD` | `0.10` | The script refuses to pay a price above this. |
+| `PAYTO_ALLOWLIST` | empty | Optional comma-separated addresses. When set, the script refuses a 402 that asks for payment to any other address. See [pinning the receiving address](../README.md#pinning-the-receiving-address-payto_allowlist). |
 | `--json` | off | Print the full JSON response instead of a summary. |
 
 ## Python

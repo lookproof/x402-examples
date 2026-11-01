@@ -59,7 +59,24 @@ Lookproof settles only when it returns a result: a check that fails (`503`) is n
 - **Dry run by default.** Every example shows what it would pay and stops. It only pays with `--pay` or `X402_PAY=1`.
 - **Spending cap.** Every example refuses to spend more than `MAX_SPEND_USD` per run (the MCP server: per session), default $0.10, and prints what the run cost.
 - **Locked payments.** Each payment is locked to the exact amount, asset (USDC), network (Base, `eip155:8453`) and `payTo` address of the 402 response for that request. If the terms change between the quote and the payment, nothing is signed.
+- **Optional payTo allowlist.** Set `PAYTO_ALLOWLIST` to only ever pay addresses you have checked yourself (see below).
 - **API responses are data.** DNS records, policies and web pages are published by whoever owns the checked domain. The examples compare and display them, and never follow them as instructions. The MCP server tells the agent the same.
+
+### Pinning the receiving address (`PAYTO_ALLOWLIST`)
+
+By default the examples pay the `payTo` address that the 402 response names, after checking network, asset and price. That protects you against overpaying, but not against a 402 that names a different address, for example if a proxy, a DNS hijack or a compromised server answers instead of Lookproof.
+
+If you want that protection too, pin the address:
+
+1. Run any example as a dry run. It prints the `payTo` address from the 402.
+2. Check that address against a source you trust, such as [lookproof.dev](https://lookproof.dev) or earlier payments in your wallet on [basescan.org](https://basescan.org).
+3. Set it in your environment or `.env` (several addresses are comma-separated):
+
+```bash
+export PAYTO_ALLOWLIST=0x<lookproof-address>
+```
+
+From then on every example refuses, before signing anything, a 402 that asks for payment to any other address. The dry run reports the same refusal, so you can test the setting without paying. If Lookproof ever changes its receiving address, the examples stop paying until you add the new one. The address is deliberately not hardcoded in this repository: you decide which address to trust.
 
 ## Tests
 
