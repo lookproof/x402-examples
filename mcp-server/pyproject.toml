@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lookproof-mcp"
+dynamic = ["version"]
+description = "MCP server with 23 Lookproof DNS and mail security checks for AI agents (SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS), paid per call in USDC via x402"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Lookproof", email = "github@lookproof.dev" }]
+keywords = ["mcp", "x402", "dns", "email-security", "spf", "dkim", "dmarc", "mta-sts", "usdc", "base", "ai-agents"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: Name Service (DNS)",
+    "Topic :: Communications :: Email",
+    "Topic :: Security",
+]
+# Exact pins: `uvx lookproof-mcp` runs in its own environment, so pinning costs nothing
+# and means every user gets the versions this release was tested with.
+dependencies = [
+    "mcp==2.3.0",
+    "x402[httpx,evm]==2.25.0",
+]
+
+[project.urls]
+Homepage = "https://lookproof.dev"
+Source = "https://github.com/lookproof/x402-examples/tree/master/mcp-server"
+Issues = "https://github.com/lookproof/x402-examples/issues"
+Changelog = "https://github.com/lookproof/x402-examples/blob/master/mcp-server/CHANGELOG.md"
+
+[project.scripts]
+lookproof-mcp = "lookproof_mcp.server:main"
+
+[tool.hatch.version]
+path = "src/lookproof_mcp/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "README.md", "LICENSE", "CHANGELOG.md", "pyproject.toml"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lookproof_mcp"]
