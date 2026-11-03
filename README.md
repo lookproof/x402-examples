@@ -10,7 +10,7 @@ These examples get you from zero to a paid check in a few minutes, and show how 
 |---|---|---|---|
 | [quickstart](quickstart/) | Python, TypeScript | One paid call to the domain health check (`/v1/domain/health`) | $0.08 |
 | [domain-monitor](domain-monitor/) | Python | Checks a list of domains daily and alerts (stdout, Discord, Telegram, email) when SPF, DKIM, DMARC or MTA-STS changes or gets weaker | $0.08 per domain |
-| [mcp-server](mcp-server/) | Python | 23 Lookproof checks as MCP tools for Claude and other AI agents, paid per call with a session cap | $0.002-0.08 per tool call |
+| [mcp-server](mcp-server/) | Python | 23 Lookproof checks as MCP tools for Claude and other AI agents, paid per call with a session cap. Installs with `uvx lookproof-mcp` | $0.002-0.08 per tool call |
 
 All 47 paid endpoints with prices, inputs and example responses: [docs/endpoints.md](docs/endpoints.md). Prices range from $0.002 to $0.08 per call.
 

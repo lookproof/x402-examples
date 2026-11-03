@@ -5,9 +5,11 @@ Dry run by default: tools report what a call would cost and return no data.
 Set X402_PAY=1 and PRIVATE_KEY_FILE (or PRIVATE_KEY) to pay. Spending is capped per session
 (one server process) by MAX_SPEND_USD.
 
-Run:  python server.py          (stdio, for Claude Code / Claude Desktop)
-      python server.py --check  (compare advertised prices with the live API, pays nothing)
+Run:  uvx lookproof-mcp            (stdio, for Claude Code / Claude Desktop)
+      uvx lookproof-mcp --check    (compare advertised prices with the live API, pays nothing)
+      uvx lookproof-mcp --version
 """
+import argparse
 import asyncio
 import os
 import re
@@ -18,6 +20,7 @@ from typing import Any
 import httpx
 from eth_account import Account
 from mcp.server import MCPServer
+from lookproof_mcp import __version__
 from x402 import x402Client
 from x402.http import decode_payment_required_header, decode_payment_response_header
 from x402.http.clients import x402HttpxClient
@@ -30,6 +33,7 @@ MAX_SPEND = float(os.getenv("MAX_SPEND_USD") or "0.10")
 PAY = os.getenv("X402_PAY") == "1"
 BASE_MAINNET = "eip155:8453"
 USDC_ON_BASE = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"  # canonical USDC on Base, 6 decimals
+HEADERS = {"User-Agent": f"lookproof-mcp/{__version__}"}  # so Lookproof can tell this client's traffic apart
 
 
 def _load_private_key() -> str | None:
@@ -58,6 +62,7 @@ PAYTO_ALLOWLIST = _payto_allowlist()
 
 mcp = MCPServer(
     "lookproof",
+    version=__version__,
     title="Lookproof DNS and mail security checks",
     website_url="https://lookproof.dev",
     instructions=(
@@ -81,7 +86,7 @@ def _usd(req) -> float:
 
 async def _quote(method: str, path: str, params: dict | None, body: dict | None) -> Any:
     """Unpaid request -> 402. Returns the USDC-on-Base option; any other asset or network is refused."""
-    async with httpx.AsyncClient(timeout=30) as http:
+    async with httpx.AsyncClient(timeout=30, headers=HEADERS) as http:
         r = await http.request(method, API + path, params=params, json=body)
     if r.status_code != 402 or "PAYMENT-REQUIRED" not in r.headers:
         raise RuntimeError(f"expected 402 from {path}, got HTTP {r.status_code}: {r.text[:200]!r}")
@@ -137,7 +142,7 @@ async def call(method: str, path: str, advertised: float, params: dict | None = 
             _spent -= price
         return {"error": f"Not paid (wallet setup failed): {type(e).__name__}"}
     try:
-        async with x402HttpxClient(client, timeout=60) as http:
+        async with x402HttpxClient(client, timeout=60, headers=HEADERS) as http:
             r = await http.request(method, API + path, params=params, json=body)
     except Exception as e:
         if _refused_before_signing(e):
@@ -311,9 +316,7 @@ async def security_headers(domain: str) -> dict:
 
 async def check_prices() -> None:
     """Compare every tool's advertised price with the live 402. Pays nothing."""
-    import re
-
-    src = open(__file__).read()
+    src = Path(__file__).read_text()
     pairs = re.findall(r'await call\("(GET|POST)", "([^"]+)", ([0-9.]+)', src)
     samples = {"/v1/mail/dkim": {"domain": "example.com", "selector": "default"},
                "/v1/dns/lookup": {"name": "example.com"}}
@@ -334,10 +337,25 @@ async def check_prices() -> None:
     sys.exit(1 if bad else 0)
 
 
-if __name__ == "__main__":
-    if "--check" in sys.argv:
+def main() -> None:
+    """Entry point for `lookproof-mcp` (and `uvx lookproof-mcp`)."""
+    parser = argparse.ArgumentParser(
+        prog="lookproof-mcp",
+        description="Lookproof DNS and mail security checks as MCP tools, paid per call with x402 (USDC on Base). "
+                    "Without arguments it runs the MCP server on stdio. Dry run unless X402_PAY=1.",
+        epilog="Settings (environment): X402_PAY, PRIVATE_KEY_FILE or PRIVATE_KEY, MAX_SPEND_USD (default 0.10), "
+               "PAYTO_ALLOWLIST. See https://github.com/lookproof/x402-examples/tree/master/mcp-server",
+    )
+    parser.add_argument("--version", action="version", version=f"lookproof-mcp {__version__}")
+    parser.add_argument("--check", action="store_true",
+                        help="compare every tool's advertised price with the live 402 response; pays nothing")
+    args = parser.parse_args()
+    if args.check:
         asyncio.run(check_prices())
-    else:
-        if PAY and not _load_private_key():
-            sys.exit("X402_PAY=1 needs PRIVATE_KEY or PRIVATE_KEY_FILE (a dedicated wallet with a few dollars of USDC on Base).")
-        mcp.run()  # stdio
+    if PAY and not _load_private_key():
+        sys.exit("X402_PAY=1 needs PRIVATE_KEY or PRIVATE_KEY_FILE (a dedicated wallet with a few dollars of USDC on Base).")
+    mcp.run()  # stdio
+
+
+if __name__ == "__main__":
+    main()
