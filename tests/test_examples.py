@@ -19,7 +19,9 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "mcp-server/src"))
 import fake_lookproof  # noqa: E402
+from lookproof_mcp import __version__ as MCP_VERSION  # noqa: E402  (only __init__, no dependencies)
 
 ROOT = Path(__file__).resolve().parent.parent
 OTHER_PAY_TO = "0x1111111111111111111111111111111111111111"
@@ -238,14 +240,17 @@ def test_monitor_rejects_bad_domain(api):
 
 # --- mcp-server ---------------------------------------------------------------
 
-SERVER = ROOT / "mcp-server/server.py"
+SERVER = ROOT / "mcp-server/src/lookproof_mcp/server.py"
+# Run the package from source; tests/test_package.py covers the built and installed wheel.
+SERVER_ENV = {"PYTHONPATH": str(ROOT / "mcp-server/src")}
 
 
 async def mcp_session(env: dict, calls: list[tuple[str, dict]]):
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
 
-    params = StdioServerParameters(command=sys.executable, args=[str(SERVER)], env={**os.environ, **env})
+    params = StdioServerParameters(command=sys.executable, args=["-m", "lookproof_mcp"],
+                                   env={**os.environ, **SERVER_ENV, **env})
     async with stdio_client(params) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -270,6 +275,7 @@ def test_mcp_tools_show_prices_and_dry_run(api):
     assert spending["payments_enabled"] is False
     assert dry["dry_run"] is True and dry["would_cost_usd"] == 0.08
     assert fake_lookproof.paid_log == []
+    assert fake_lookproof.user_agents == [f"lookproof-mcp/{MCP_VERSION}"]
 
 
 def test_mcp_pays_and_caps_session(api, key):
@@ -282,6 +288,8 @@ def test_mcp_pays_and_caps_session(api, key):
     assert "Session spending cap reached" in capped["error"]
     assert spending["paid_calls"] == 3 and abs(spending["spent_usd"] - 0.087) < 1e-9
     assert [p["path"] for p in fake_lookproof.paid_log] == ["/v1/domain/health", "/v1/mail/spf-parse", "/v1/dns/lookup"]
+    # quote, paid request and 402 retry: every request identifies the client
+    assert set(fake_lookproof.user_agents) == {f"lookproof-mcp/{MCP_VERSION}"}
 
 
 def test_mcp_refuses_price_above_advertised(api, key, monkeypatch):
@@ -302,7 +310,7 @@ def test_mcp_payment_locked_to_quote(api, key, monkeypatch):
 
 
 def test_mcp_check_matches_endpoint_prices(api):
-    r = run(SERVER, "--check")
+    r = run("-m", "lookproof_mcp", "--check", env=SERVER_ENV)
     assert r.returncode == 0, r.stdout + r.stderr
     assert "0 mismatches" in r.stdout
 

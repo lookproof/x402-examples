@@ -1,0 +1,52 @@
+# Builds the lookproof-mcp package (mcp-server/) with uv, installs the wheel into an empty venv and
+# runs the installed command against the local fake API. Validates server.json for the MCP registry.
+# Publishes nothing.
+name: mcp-package
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.13"]   # oldest supported and newest, for the installed package
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
+      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c  # v6.0.0
+        with:
+          python-version: "3.12"   # runs pytest and the fake API
+      - run: pip install -r tests/requirements.txt
+      - name: Build, install in an empty venv and test
+        run: python -m pytest tests/test_package.py -v
+        env:
+          PACKAGE_TEST_PYTHON: ${{ matrix.python }}
+      - name: Smoke test with uv tool run, as uvx runs it
+        working-directory: mcp-server
+        run: |
+          uv build
+          uv tool run --isolated --python ${{ matrix.python }} --from dist/lookproof_mcp-*.whl lookproof-mcp --version
+
+  server-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate server.json with mcp-publisher
+        env:
+          MCP_PUBLISHER_VERSION: v1.8.7
+        run: |
+          curl -sSfL "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz" \
+            | tar xz mcp-publisher
+          ./mcp-publisher validate mcp-server/server.json

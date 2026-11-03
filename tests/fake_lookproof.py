@@ -35,6 +35,7 @@ ENDPOINTS = {(e["method"], e["path"]): e for e in json.loads((ROOT / "docs/endpo
 USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
 quotes_served = 0
 paid_log: list[dict] = []
+user_agents: list[str] = []  # User-Agent of every request to an endpoint
 
 
 def price_atomic(e: dict, body: dict | None) -> int:
@@ -96,6 +97,7 @@ class Handler(BaseHTTPRequestHandler):
         e = ENDPOINTS.get((method, url.path))
         if e is None:
             return self._send(404, {"error": {"code": "not_found"}})
+        user_agents.append(self.headers.get("User-Agent", ""))
         body = None
         if method == "POST":
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length") or 0)) or b"{}")
@@ -136,6 +138,7 @@ def reset() -> None:
     global quotes_served
     quotes_served = 0
     paid_log.clear()
+    user_agents.clear()
 
 
 def serve(port: int = 0) -> ThreadingHTTPServer:
