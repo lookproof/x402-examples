@@ -127,6 +127,7 @@
      "applied_policy": "reject",
      "aspf": "r",
      "domain": "example.com",
+     "effective_policy": "reject",
      "nonexistent_policy": "reject",
      "org_domain": "example.com",
      "pct": 100,
@@ -708,6 +709,7 @@
      "applied_policy": "reject",
      "aspf": "r",
      "domain": "example.com",
+     "effective_policy": "reject",
      "nonexistent_policy": "reject",
      "org_domain": "example.com",
      "pct": 100,
@@ -879,6 +881,7 @@
         "applied_policy": "reject",
         "aspf": "r",
         "domain": "example.com",
+        "effective_policy": "reject",
         "nonexistent_policy": "reject",
         "org_domain": "example.com",
         "pct": 100,
@@ -1022,6 +1025,7 @@
         "applied_policy": null,
         "aspf": null,
         "domain": "example.org",
+        "effective_policy": null,
         "nonexistent_policy": null,
         "org_domain": "example.org",
         "pct": null,
@@ -1296,6 +1300,7 @@
     "applied_policy": "reject",
     "aspf": "r",
     "domain": "example.com",
+    "effective_policy": "reject",
     "nonexistent_policy": "reject",
     "org_domain": "example.com",
     "pct": 100,
@@ -1929,9 +1934,9 @@
        }
       ]
      },
-     "explanation": "Receivers decide how to handle mail that does not match the policy.",
+     "explanation": "~all asks receivers to accept mail from servers that are not listed but treat it as suspicious. With an enforcing DMARC policy (p=quarantine or p=reject in effect; t=y counts one step lower) that is enough, because DMARC decides what happens to forged mail. Without one, receivers may still deliver it, and -all (fail) is the stronger ending.",
      "message": "The SPF policy ends with softfail (~all).",
-     "recommendation": "Confirm that all legitimate senders are covered before changing the policy.",
+     "recommendation": "If DMARC is not enforcing yet, confirm that every legitimate sender is listed and then end the record with a hard fail instead of softfail. With an enforcing DMARC policy, softfail is acceptable.",
      "severity": "info"
     }
    ],

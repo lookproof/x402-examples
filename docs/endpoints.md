@@ -152,6 +152,7 @@ Example response (illustrative):
       "applied_policy": "reject",
       "aspf": "r",
       "domain": "example.com",
+      "effective_policy": "reject",
       "nonexistent_policy": "reject",
       "org_domain": "example.com",
       "pct": 100,
@@ -640,6 +641,7 @@ Example response (illustrative):
       "applied_policy": "reject",
       "aspf": "r",
       "domain": "example.com",
+      "effective_policy": "reject",
       "nonexistent_policy": "reject",
       "org_domain": "example.com",
       "pct": 100,
@@ -772,6 +774,7 @@ Example response (illustrative):
             "applied_policy": "reject",
             "aspf": "r",
             "domain": "example.com",
+            "effective_policy": "reject",
             "nonexistent_policy": "reject",
             "org_domain": "example.com",
             "pct": 100,
@@ -1004,6 +1007,7 @@ Example response (illustrative):
     "applied_policy": "reject",
     "aspf": "r",
     "domain": "example.com",
+    "effective_policy": "reject",
     "nonexistent_policy": "reject",
     "org_domain": "example.com",
     "pct": 100,
@@ -1538,9 +1542,9 @@ Example response (illustrative):
           }
         ]
       },
-      "explanation": "Receivers decide how to handle mail that does not match the policy.",
+      "explanation": "~all asks receivers to accept mail from servers that are not listed but treat it as sus...",
       "message": "The SPF policy ends with softfail (~all).",
-      "recommendation": "Confirm that all legitimate senders are covered before changing the policy.",
+      "recommendation": "If DMARC is not enforcing yet, confirm that every legitimate sender is listed and then ...",
       "severity": "info"
     }
   ],
