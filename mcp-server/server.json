@@ -1,0 +1,54 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.lookproof/lookproof-mcp",
+  "title": "Lookproof DNS and mail security checks",
+  "description": "SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS and DNS checks for domains, paid per call in USDC (x402)",
+  "version": "0.1.0",
+  "websiteUrl": "https://lookproof.dev",
+  "repository": {
+    "url": "https://github.com/lookproof/x402-examples",
+    "source": "github",
+    "subfolder": "mcp-server"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "lookproof-mcp",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "X402_PAY",
+          "description": "Set to 1 to pay for calls. Without it every tool is a dry run that only reports the price.",
+          "isRequired": false
+        },
+        {
+          "name": "PRIVATE_KEY_FILE",
+          "description": "Path to a file (chmod 600) with the private key of a dedicated wallet holding a few dollars of USDC on Base",
+          "isRequired": false
+        },
+        {
+          "name": "PRIVATE_KEY",
+          "description": "Private key of a dedicated wallet (alternative to PRIVATE_KEY_FILE)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "MAX_SPEND_USD",
+          "description": "Spending cap per session (one server process) in USD",
+          "default": "0.10",
+          "isRequired": false
+        },
+        {
+          "name": "PAYTO_ALLOWLIST",
+          "description": "Optional comma-separated addresses the server may pay; a 402 asking for any other payTo is refused",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}
