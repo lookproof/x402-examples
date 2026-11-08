@@ -50,5 +50,19 @@
         }
       ]
     }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.lookproof.dev/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer followed by your Lookproof API key (lp_live_...). Each tool call counts against the key's monthly quota; no wallet needed.",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
   ]
 }
