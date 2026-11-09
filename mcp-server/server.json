@@ -58,8 +58,8 @@
       "headers": [
         {
           "name": "Authorization",
-          "description": "Bearer followed by your Lookproof API key (lp_live_...). Each tool call counts against the key's monthly quota; no wallet needed.",
-          "isRequired": true,
+          "description": "Optional: Bearer followed by your Lookproof API key (lp_live_...). Each tool call then counts against the key's monthly quota. Without it the server is a small free trial (a few calls a day, single checks only). No wallet needed.",
+          "isRequired": false,
           "isSecret": true
         }
       ]
