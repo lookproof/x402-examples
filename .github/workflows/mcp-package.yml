@@ -1,5 +1,6 @@
 # Builds the lookproof-mcp package (mcp-server/) with uv, installs the wheel into an empty venv and
-# runs the installed command against the local fake API. Validates server.json for the MCP registry.
+# runs the installed command against the local fake API. Builds the Docker image. Validates server.json for
+# the MCP registry.
 # Publishes nothing.
 name: mcp-package
 
@@ -36,6 +37,20 @@ jobs:
         run: |
           uv build
           uv tool run --isolated --python ${{ matrix.python }} --from dist/lookproof_mcp-*.whl lookproof-mcp --version
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the image Glama checks and start it without secrets
+        working-directory: mcp-server
+        run: |
+          docker build -t lookproof-mcp .
+          docker run --rm lookproof-mcp --version
+          printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"0"}}}' \
+            | timeout 30 docker run -i --rm lookproof-mcp | grep -q '"name":"lookproof"'
 
   server-json:
     runs-on: ubuntu-latest
