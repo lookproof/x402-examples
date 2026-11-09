@@ -164,11 +164,13 @@ def test_server_json_matches_package():
     assert env_names == {"X402_PAY", "PRIVATE_KEY_FILE", "PRIVATE_KEY", "MAX_SPEND_USD", "PAYTO_ALLOWLIST"}
     assert all(e.get("isSecret") for e in pkg["environmentVariables"] if e["name"] == "PRIVATE_KEY")
     assert f"## {VERSION} " in (PKG / "CHANGELOG.md").read_text()
-    # The hosted server (lookproof/lookproof, api.lookproof.dev/mcp): an API key, no wallet.
+    # The hosted server (lookproof/lookproof, api.lookproof.dev/mcp): an optional API key (the
+    # authless trial answers without one), no wallet.
     (remote,) = sj["remotes"]
     assert remote["type"] == "streamable-http" and remote["url"] == "https://api.lookproof.dev/mcp"
     (header,) = remote["headers"]
-    assert header["name"] == "Authorization" and header["isSecret"] and header["isRequired"]
+    assert header["name"] == "Authorization" and header["isSecret"]
+    assert header["isRequired"] is False
 
 
 def test_package_docs_have_no_em_dashes_or_relative_links():
