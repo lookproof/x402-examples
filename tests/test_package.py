@@ -59,7 +59,8 @@ def built(tmp_path_factory):
 @pytest.fixture()
 def api(monkeypatch):
     for k in ("FAKE_PRICE_FACTOR", "FAKE_PAY_TO", "FAKE_SWITCH_PAY_TO", "FAKE_STATUS", "FAKE_DATA_FILE",
-              "X402_PAY", "PRIVATE_KEY", "PRIVATE_KEY_FILE", "MAX_SPEND_USD", "PAYTO_ALLOWLIST", "PYTHONPATH"):
+              "X402_PAY", "PRIVATE_KEY", "PRIVATE_KEY_FILE", "MAX_SPEND_USD", "PAYTO_ALLOWLIST", "PYTHONPATH",
+              "LOOKPROOF_API_KEY", "FAKE_API_KEY", "FAKE_CREDITS"):
         monkeypatch.delenv(k, raising=False)
     fake_lookproof.reset()
     server = fake_lookproof.serve(0)
@@ -84,7 +85,7 @@ def test_version(built):
 
 def test_help(built):
     r = run(built["exe"], "--help")
-    assert r.returncode == 0 and "--check" in r.stdout and "X402_PAY" in r.stdout
+    assert r.returncode == 0 and "--check" in r.stdout and "X402_PAY" in r.stdout and "LOOKPROOF_API_KEY" in r.stdout
 
 
 def test_installed_dry_run_pays_nothing(built, api):
@@ -117,6 +118,26 @@ def test_installed_check(built, api, monkeypatch):
     monkeypatch.setenv("FAKE_PRICE_FACTOR", "2")  # read by the fake API in this process
     r = run(built["exe"], "--check")
     assert r.returncode == 1 and "23 mismatches" in r.stdout
+
+
+def test_installed_key_mode(built, api):
+    import anyio
+    from mcp import ClientSession, StdioServerParameters
+    from mcp.client.stdio import stdio_client
+
+    async def session():
+        params = StdioServerParameters(command=str(built["exe"]), env={**os.environ, "LOOKPROOF_API_KEY": "lp_test_fake"},
+                                       cwd=str(built["exe"].parent))
+        async with stdio_client(params) as (read, write):
+            async with ClientSession(read, write) as s:
+                await s.initialize()
+                res = await s.call_tool("spf", {"domain": "example.com"})
+                usage = await s.call_tool("get_spending", {})
+                return json.loads(res.content[0].text), json.loads(usage.content[0].text)
+
+    res, usage = anyio.run(session)
+    assert res["credits_remaining"] == 249 and usage["credits_used"] == 1
+    assert fake_lookproof.paid_log == [] and fake_lookproof.quotes_served == 0
 
 
 def test_pay_without_key_refuses_to_start(built, api):
@@ -161,8 +182,9 @@ def test_server_json_matches_package():
     assert pkg["identifier"] == pyproject["project"]["name"] == "lookproof-mcp"
     assert pkg["version"] == VERSION and pkg["transport"] == {"type": "stdio"}
     env_names = {e["name"] for e in pkg["environmentVariables"]}
-    assert env_names == {"X402_PAY", "PRIVATE_KEY_FILE", "PRIVATE_KEY", "MAX_SPEND_USD", "PAYTO_ALLOWLIST"}
-    assert all(e.get("isSecret") for e in pkg["environmentVariables"] if e["name"] == "PRIVATE_KEY")
+    assert env_names == {"LOOKPROOF_API_KEY", "X402_PAY", "PRIVATE_KEY_FILE", "PRIVATE_KEY", "MAX_SPEND_USD",
+                         "PAYTO_ALLOWLIST"}
+    assert all(e.get("isSecret") for e in pkg["environmentVariables"] if e["name"] in ("PRIVATE_KEY", "LOOKPROOF_API_KEY"))
     assert f"## {VERSION} " in (PKG / "CHANGELOG.md").read_text()
 
 
@@ -174,3 +196,13 @@ def test_package_docs_have_no_em_dashes_or_relative_links():
     assert not re.search(r"\]\((?!https://|#)", readme)
     for f in ("README.md", "CHANGELOG.md", "server.json", "pyproject.toml"):
         assert "\u2014" not in (PKG / f).read_text(), f
+
+
+def test_dockerfile_runs_dry_without_secrets():
+    """The Dockerfile is for automated checks (Glama): it must start the server with no key or wallet."""
+    df = (PKG / "Dockerfile").read_text()
+    instructions = [ln.split()[0].upper() for ln in df.splitlines() if ln.strip() and not ln.lstrip().startswith("#")]
+    assert "ENV" not in instructions and "ARG" not in instructions
+    assert not re.search(r"LOOKPROOF_API_KEY|PRIVATE_KEY|X402_PAY", "\n".join(
+        ln for ln in df.splitlines() if not ln.lstrip().startswith("#")))
+    assert 'ENTRYPOINT ["lookproof-mcp"]' in df and "USER " in df
