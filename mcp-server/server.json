@@ -4,7 +4,7 @@
   "title": "Lookproof DNS and mail security checks",
   "description": "SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS and DNS checks for domains, with an API key or USDC (x402)",
   "version": "0.2.0",
-  "websiteUrl": "https://lookproof.dev",
+  "websiteUrl": "https://lookproof.dev/agents",
   "repository": {
     "url": "https://github.com/lookproof/x402-examples",
     "source": "github",

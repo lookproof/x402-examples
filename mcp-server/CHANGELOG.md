@@ -7,6 +7,7 @@
 - The server refuses to start with a `LOOKPROOF_API_KEY` that does not start with `lp_`, or with both `LOOKPROOF_API_KEY` and `X402_PAY=1`.
 - The dry-run note names both ways to get data: a free API key or `X402_PAY=1`.
 - `Dockerfile` that runs the server as a dry run, with no key, wallet or other secret, for automated checks such as Glama's.
+- `server.json`: `websiteUrl` is now https://lookproof.dev/agents, the setup page for MCP clients.
 - x402 mode is unchanged.
 
 ## 0.1.0
