@@ -103,7 +103,7 @@ def test_installed_dry_run_pays_nothing(built, api):
 
     init, tools, dry = anyio.run(session)
     assert init.server_info.name == "lookproof" and init.server_info.version == VERSION
-    assert len(tools) == 24
+    assert len(tools) == 25
     assert dry["dry_run"] is True and dry["would_cost_usd"] == 0.08
     assert fake_lookproof.paid_log == []
     assert fake_lookproof.user_agents == [f"lookproof-mcp/{VERSION}"]
@@ -112,11 +112,11 @@ def test_installed_dry_run_pays_nothing(built, api):
 def test_installed_check(built, api, monkeypatch):
     r = run(built["exe"], "--check")
     assert r.returncode == 0, r.stdout + r.stderr
-    assert "23 paid tools, 0 mismatches" in r.stdout
+    assert "24 paid tools, 0 mismatches" in r.stdout
     assert fake_lookproof.paid_log == []
     monkeypatch.setenv("FAKE_PRICE_FACTOR", "2")  # read by the fake API in this process
     r = run(built["exe"], "--check")
-    assert r.returncode == 1 and "23 mismatches" in r.stdout
+    assert r.returncode == 1 and "24 mismatches" in r.stdout
 
 
 def test_pay_without_key_refuses_to_start(built, api):

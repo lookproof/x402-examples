@@ -118,4 +118,4 @@ Open the basescan link to see the USDC transfer on-chain. The full response (`--
 5. Lookproof runs the check, a facilitator (Coinbase CDP) settles the payment on Base, and the API returns `200` with the result.
    The `PAYMENT-RESPONSE` header contains the transaction hash. A failed check (`503`) is not settled.
 
-All 47 endpoints and their prices: [`../docs/endpoints.md`](../docs/endpoints.md).
+All 48 endpoints and their prices: [`../docs/endpoints.md`](../docs/endpoints.md).
