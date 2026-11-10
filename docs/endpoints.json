@@ -677,6 +677,14 @@
   "example_response": {
    "checked_at": "2026-10-24T12:00:00Z",
    "data": {
+    "classification": {
+     "category": "protected",
+     "reasons": [
+      "policy_reject"
+     ],
+     "reporting_broken": false,
+     "subdomains_open": false
+    },
     "dkim": [
      {
       "domain": "example.com",
@@ -875,6 +883,14 @@
      "result": {
       "checked_at": "2026-10-24T12:00:00Z",
       "data": {
+       "classification": {
+        "category": "protected",
+        "reasons": [
+         "policy_reject"
+        ],
+        "reporting_broken": false,
+        "subdomains_open": false
+       },
        "dkim": [],
        "dmarc": {
         "adkim": "r",
@@ -1019,6 +1035,14 @@
      "result": {
       "checked_at": "2026-10-24T12:00:00Z",
       "data": {
+       "classification": {
+        "category": "nxdomain",
+        "reasons": [
+         "domain_not_found"
+        ],
+        "reporting_broken": false,
+        "subdomains_open": false
+       },
        "dkim": [],
        "dmarc": {
         "adkim": null,
@@ -3497,6 +3521,223 @@
    "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
    "schema_version": "1.0",
    "status": "ok"
+  }
+ },
+ {
+  "id": "http.x402",
+  "method": "GET",
+  "path": "/v1/http/x402",
+  "summary": "x402 endpoint check",
+  "price": {
+   "amount": 10000,
+   "kind": "fixed"
+  },
+  "params": [
+   {
+    "name": "url",
+    "required": true,
+    "example": "https://example.com/paid/weather"
+   },
+   {
+    "name": "facilitator",
+    "required": false,
+    "example": null
+   },
+   {
+    "name": "method",
+    "required": false,
+    "example": null
+   }
+  ],
+  "body_fields": [],
+  "body_example": null,
+  "example_response": {
+   "checked_at": "2026-10-24T12:00:00Z",
+   "data": {
+    "description": "Weather report",
+    "discovery": {
+     "bazaar": {
+      "description": true,
+      "output_schema": false
+     },
+     "files": [
+      {
+       "error": null,
+       "path": "/llms.txt",
+       "state": "present",
+       "status": 200
+      },
+      {
+       "error": null,
+       "path": "/openapi.json",
+       "state": "present",
+       "status": 200
+      },
+      {
+       "error": "connect",
+       "path": "/.well-known/agent-card.json",
+       "state": "missing",
+       "status": null
+      },
+      {
+       "error": "connect",
+       "path": "/mcp.json",
+       "state": "missing",
+       "status": null
+      },
+      {
+       "error": "connect",
+       "path": "/.well-known/x402",
+       "state": "missing",
+       "status": null
+      }
+     ],
+     "origin": "https://example.com"
+    },
+    "domain": {
+     "category": "protected",
+     "dmarc": "reject",
+     "dnssec": "secure",
+     "domain": "example.com",
+     "full_check_url": "https://lookproof.dev/check/example.com",
+     "spf": "present",
+     "spoofable": false
+    },
+    "error": null,
+    "facilitator": null,
+    "final_url": "https://example.com/paid/weather",
+    "hops": [
+     {
+      "location": null,
+      "status": 402,
+      "url": "https://example.com/paid/weather"
+     }
+    ],
+    "method": "GET",
+    "mime_type": "application/json",
+    "networks_version": "2026-11-07",
+    "option_count": 1,
+    "options": [
+     {
+      "amount": "10000",
+      "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "asset_symbol": "USDC",
+      "max_timeout_seconds": 60,
+      "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+      "network_label": "Solana",
+      "network_status": "checked",
+      "pay_to": "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
+      "pay_to_sanctioned": false,
+      "price": "0.01 USDC",
+      "scheme": "exact",
+      "testnet": false
+     }
+    ],
+    "pay_to": [
+     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
+    ],
+    "points": [
+     {
+      "codes": [],
+      "key": "payment_required",
+      "state": "in_place"
+     },
+     {
+      "codes": [],
+      "key": "requirements",
+      "state": "in_place"
+     },
+     {
+      "codes": [
+       "X402_BAZAAR_INCOMPLETE",
+       "X402_DISCOVERY_MISSING"
+      ],
+      "key": "discovery",
+      "state": "warning"
+     },
+     {
+      "codes": [],
+      "key": "domain",
+      "state": "in_place"
+     },
+     {
+      "codes": [],
+      "key": "pay_to",
+      "state": "in_place"
+     }
+    ],
+    "protocol_version": 2,
+    "resource_url": "https://example.com/paid/weather",
+    "response_ms": 0,
+    "sanctions_list": {
+     "evm_addresses": 1,
+     "loaded": true,
+     "published": "2026-10-30",
+     "solana_addresses": 0
+    },
+    "source": "header",
+    "status": 402,
+    "tls": {
+     "days_remaining": 36,
+     "hostname_match": true,
+     "not_after": "2026-11-30T00:00:00Z",
+     "trusted": true
+    },
+    "url": "https://example.com/paid/weather"
+   },
+   "endpoint": "http.x402",
+   "findings": [
+    {
+     "code": "X402_BAZAAR_INCOMPLETE",
+     "evidence": {
+      "count": 1,
+      "items": [
+       {
+        "missing": "output_schema"
+       }
+      ]
+     },
+     "explanation": "Catalogs such as the x402 Bazaar list an endpoint from its payment requirements: the description says what a buyer gets, and the output schema (outputSchema in a v1 option, the bazaar extension in v2) says what the response looks like. Agents choose between endpoints from these two fields, so an endpoint without them is listed poorly or not at all. The evidence names what is missing.",
+     "message": "The 402 lacks a description or an output schema for catalogs.",
+     "recommendation": "Give the route a description, and declare the output schema with the bazaar extension (v2) or outputSchema (v1) in the payment middleware's route config.",
+     "severity": "info"
+    },
+    {
+     "code": "X402_DISCOVERY_MISSING",
+     "evidence": {
+      "count": 3,
+      "items": [
+       {
+        "path": "/.well-known/agent-card.json",
+        "state": "missing"
+       },
+       {
+        "path": "/mcp.json",
+        "state": "missing"
+       },
+       {
+        "path": "/.well-known/x402",
+        "state": "missing"
+       }
+      ]
+     },
+     "explanation": "Agents look for files on the same origin before they call or pay: /llms.txt (a short description for language models), /openapi.json (the API's operations), /.well-known/agent-card.json (an A2A agent card), /mcp.json (an MCP server listing) and /.well-known/x402 (the capability manifest). Each file was fetched once without following redirects. The evidence gives the path and whether it was missing or answered with something else, often an HTML page that a single-page app serves for every path.",
+     "message": "A discovery file is missing on the endpoint's origin.",
+     "recommendation": "Serve the files that fit the API on the endpoint's own origin, with the right content type and status 200, and return 404 for paths that do not exist.",
+     "severity": "info"
+    }
+   ],
+   "meta": {
+    "cache_hit": false,
+    "duration_ms": 42,
+    "fresh_until": "2026-10-24T12:05:00Z",
+    "observed_at": "2026-10-24T12:00:00Z",
+    "resolver": null,
+    "source": "dns"
+   },
+   "request_id": "req_aaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "schema_version": "1.0",
+   "status": "info"
   }
  },
  {

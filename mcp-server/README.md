@@ -2,7 +2,7 @@
 
 <!-- mcp-name: io.github.lookproof/lookproof-mcp -->
 
-An [MCP](https://modelcontextprotocol.io) server that gives Claude and other AI agents 23 [Lookproof](https://lookproof.dev) tools: domain and site health, SPF, DKIM, DMARC, MTA-STS, BIMI, DNS, DNSSEC, CAA, RDAP, TLS certificates and HTTP security headers. The agent pays per call in USDC on Base via x402, from a wallet you control, with a spending cap per session.
+An [MCP](https://modelcontextprotocol.io) server that gives Claude and other AI agents 24 [Lookproof](https://lookproof.dev) tools: domain and site health, SPF, DKIM, DMARC, MTA-STS, BIMI, DNS, DNSSEC, CAA, RDAP, TLS certificates, HTTP security headers, and a check of an x402 endpoint before an agent pays it. The agent pays per call in USDC on Base via x402, from a wallet you control, with a spending cap per session.
 
 Every tool description states its price, so the agent can see what a call costs before making it. Without `X402_PAY=1` nothing is ever paid: every tool is a dry run that reports the price and returns no data.
 
@@ -26,13 +26,17 @@ uvx lookproof-mcp --version     # needs uv: https://docs.astral.sh/uv/
 | `mta_sts` | $0.02 | `tls_certificate` | $0.01 |
 | `tlsrpt` | $0.01 | `security_headers` | $0.01 |
 | `mx` | $0.01 | | |
-| `spoofable` | $0.01 | | |
+| `spoofable` | $0.01 | `x402_check` | $0.01 |
 
 `get_spending` is free and shows what the session has spent and how much budget is left.
 
+`x402_check` checks another x402 endpoint without paying it: whether an unpaid request gets a valid 402, the payTo address, price, network and asset (USDC verified against its known contract), the discovery files on the same origin (`/llms.txt`, `/openapi.json`, `/.well-known/agent-card.json`, `/mcp.json`, `/.well-known/x402`) and the SPF, DMARC and DNSSEC of the endpoint's domain. Only the check itself ($0.01) is paid.
+
+This server pays with x402 only. The same calls on Lookproof's API with an API key (`Authorization: Bearer lp_...`) cost credits instead: 5 for `domain_health` and `site_health`, 1 for every other tool here, `x402_check` included.
+
 ## Endpoints without a tool
 
-Lookproof has 47 paid endpoints. This server exposes the 23 an agent is most likely to need for questions about a domain's DNS and mail security, because every extra tool costs context and makes the agent's choice harder. The other 24, and why they are left out:
+Lookproof has 48 paid endpoints. This server exposes the 24 an agent is most likely to need for questions about a domain's DNS and mail security, because every extra tool costs context and makes the agent's choice harder. The other 24, and why they are left out:
 
 | Endpoints | Why left out |
 |---|---|
