@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "lookproof-mcp"
 dynamic = ["version"]
-description = "MCP server with 23 Lookproof DNS and mail security checks for AI agents (SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS), paid per call in USDC via x402"
+description = "MCP server with 23 Lookproof DNS and mail security checks for AI agents (SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS), with a Lookproof API key or paid per call in USDC via x402"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
