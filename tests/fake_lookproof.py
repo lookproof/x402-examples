@@ -14,6 +14,11 @@ Test knobs (environment):
     FAKE_SWITCH_PAY_TO  quote this payTo on the second 402 (tests the payment lock)
     FAKE_STATUS         status for paid requests (e.g. 503 to test failures)
     FAKE_DATA_FILE      JSON file: {"<domain>": {<domain.health data>}} served for domain.health
+    FAKE_API_KEY        the one valid API key (default lp_test_fake); any other lp_ key gets 401
+    FAKE_CREDITS        credits per period for that key (default 250); each successful key request uses 1
+
+A request with Authorization: Bearer lp_... is answered like an API-key customer: no 402, the
+example response with X-Quota-* headers, and GET /v1/usage reports the credits.
 """
 import base64
 import hashlib
@@ -36,6 +41,7 @@ USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
 quotes_served = 0
 paid_log: list[dict] = []
 user_agents: list[str] = []  # User-Agent of every request to an endpoint
+key_log: list[dict] = []  # successful API-key requests
 
 
 def price_atomic(e: dict, body: dict | None) -> int:
@@ -90,11 +96,46 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(raw)
 
+    def _api_key(self) -> str | None:
+        auth = self.headers.get("Authorization", "")
+        token = auth[7:].strip() if auth.startswith("Bearer ") else ""
+        return token if token.startswith("lp_") else None  # like Lookproof: a non-lp_ value is ignored
+
+    def _quota_headers(self) -> dict:
+        limit = int(os.getenv("FAKE_CREDITS", "250"))
+        return {"X-Quota-Limit": str(limit), "X-Quota-Remaining": str(max(limit - len(key_log), 0)),
+                "X-Quota-Reset": "1767225600"}
+
+    def _handle_key(self, method: str, url, e: dict | None, key: str) -> None:
+        if key != os.getenv("FAKE_API_KEY", "lp_test_fake"):
+            return self._send(401, {"error": {"code": "invalid_api_key", "message": "unknown key"}})
+        if self.headers.get("PAYMENT-SIGNATURE"):
+            return self._send(400, {"error": {"code": "bad_request", "message": "key and payment"}})
+        limit = int(os.getenv("FAKE_CREDITS", "250"))
+        if url.path == "/v1/usage" and method == "GET":
+            return self._send(200, {"request_id": "req_fake", "plan": "free", "period_start": "2026-11-01T00:00:00Z",
+                                    "period_end": "2026-12-01T00:00:00Z", "credits_limit": limit,
+                                    "credits_used": len(key_log), "credits_remaining": max(limit - len(key_log), 0),
+                                    "by_endpoint": []}, self._quota_headers())
+        if e is None:
+            return self._send(404, {"error": {"code": "not_found"}})
+        if method == "POST":
+            self.rfile.read(int(self.headers.get("Content-Length") or 0))
+        if len(key_log) >= limit:
+            return self._send(429, {"error": {"code": "quota_exceeded", "message": "credits used up"}},
+                              self._quota_headers())
+        key_log.append({"path": url.path})
+        self._send(200, e["example_response"], self._quota_headers())
+
     def _handle(self, method: str) -> None:
         url = urlsplit(self.path)
         if url.path == "/_paid":
             return self._send(200, {"paid": paid_log, "quotes": quotes_served})
         e = ENDPOINTS.get((method, url.path))
+        key = self._api_key()
+        if key:
+            user_agents.append(self.headers.get("User-Agent", ""))
+            return self._handle_key(method, url, e, key)
         if e is None:
             return self._send(404, {"error": {"code": "not_found"}})
         user_agents.append(self.headers.get("User-Agent", ""))
@@ -139,6 +180,7 @@ def reset() -> None:
     quotes_served = 0
     paid_log.clear()
     user_agents.clear()
+    key_log.clear()
 
 
 def serve(port: int = 0) -> ThreadingHTTPServer:

@@ -31,7 +31,8 @@ OTHER_PAY_TO = "0x1111111111111111111111111111111111111111"
 def api(monkeypatch):
     for k in ("FAKE_PRICE_FACTOR", "FAKE_PAY_TO", "FAKE_SWITCH_PAY_TO", "FAKE_STATUS", "FAKE_DATA_FILE",
               "X402_PAY", "PRIVATE_KEY", "PRIVATE_KEY_FILE", "MAX_SPEND_USD", "DOMAINS", "DOMAINS_FILE",
-              "PAYTO_ALLOWLIST", "STATE_FILE", "ALERT_ON", "DELIVERY"):
+              "PAYTO_ALLOWLIST", "STATE_FILE", "ALERT_ON", "DELIVERY", "LOOKPROOF_API_KEY", "FAKE_API_KEY",
+              "FAKE_CREDITS"):
         monkeypatch.delenv(k, raising=False)
     fake_lookproof.reset()
     server = fake_lookproof.serve(0)
@@ -272,8 +273,9 @@ def test_mcp_tools_show_prices_and_dry_run(api):
     paid_tools = [t for t in tools if t.name != "get_spending"]
     assert len(paid_tools) >= 20
     assert all("USDC per call" in t.description for t in paid_tools)
-    assert spending["payments_enabled"] is False
+    assert spending["mode"] == "x402" and spending["payments_enabled"] is False
     assert dry["dry_run"] is True and dry["would_cost_usd"] == 0.08
+    assert "LOOKPROOF_API_KEY" in dry["note"] and "https://lookproof.dev/pricing" in dry["note"]
     assert fake_lookproof.paid_log == []
     assert fake_lookproof.user_agents == [f"lookproof-mcp/{MCP_VERSION}"]
 
@@ -307,6 +309,66 @@ def test_mcp_payment_locked_to_quote(api, key, monkeypatch):
     assert res["error"].startswith("Not paid: the payment terms changed")
     assert spending["spent_usd"] == 0
     assert fake_lookproof.paid_log == []
+
+
+# --- mcp-server with an API key ----------------------------------------------
+
+API_KEY = "lp_test_fake"  # the fake API's default valid key
+
+
+def test_mcp_key_mode_uses_credits_not_wallet(api):
+    calls = [("domain_health", {"domain": "example.com"}), ("spf_parse", {"record": "v=spf1 -all"}),
+             ("dns_lookup", {"name": "example.com", "types": "A,MX"}), ("get_spending", {})]
+    tools, (health, parse, lookup, usage) = mcp_run({"LOOKPROOF_API_KEY": API_KEY}, calls)
+    paid_tools = [t for t in tools if t.name != "get_spending"]
+    assert len(paid_tools) == 23
+    assert all(t.description.endswith("Uses your Lookproof credits.") for t in paid_tools)
+    assert not any("USDC" in t.description for t in tools)
+    assert health["data"]["endpoint"] == "domain.health" and "cost_usd" not in health and "tx" not in health
+    assert health["credits_remaining"] == 249 and health["credits_limit"] == 250
+    assert parse["credits_remaining"] == 248 and lookup["credits_remaining"] == 247
+    assert usage == {"mode": "api_key", "calls_this_session": 3, "plan": "free",
+                     "period_start": "2026-11-01T00:00:00Z", "period_end": "2026-12-01T00:00:00Z",
+                     "credits_limit": 250, "credits_used": 3, "credits_remaining": 247, "by_endpoint": []}
+    # Sent with the key, never quoted or paid with x402
+    assert fake_lookproof.quotes_served == 0 and fake_lookproof.paid_log == []
+    assert [k["path"] for k in fake_lookproof.key_log] == ["/v1/domain/health", "/v1/mail/spf-parse", "/v1/dns/lookup"]
+    assert set(fake_lookproof.user_agents) == {f"lookproof-mcp/{MCP_VERSION}"}
+
+
+def test_mcp_key_mode_ignores_wallet_settings(api, key):
+    # A wallet key in the environment without X402_PAY is not used: the API key pays.
+    _, (res,) = mcp_run({"LOOKPROOF_API_KEY": API_KEY, "PRIVATE_KEY": key}, [("spf", {"domain": "example.com"})])
+    assert res["credits_remaining"] == 249
+    assert fake_lookproof.paid_log == [] and fake_lookproof.quotes_served == 0
+
+
+def test_mcp_key_mode_invalid_key(api):
+    _, (res, usage) = mcp_run({"LOOKPROOF_API_KEY": "lp_live_revoked"},
+                              [("spf", {"domain": "example.com"}), ("get_spending", {})])
+    assert res["error"].startswith("HTTP 401, no data.") and "LOOKPROOF_API_KEY" in res["error"]
+    assert usage["mode"] == "api_key" and usage["error"].startswith("HTTP 401")
+    assert "lp_live_revoked" not in json.dumps([res, usage])  # the key is never echoed back
+    assert fake_lookproof.paid_log == [] and fake_lookproof.key_log == []
+
+
+def test_mcp_key_mode_credits_used_up(api, monkeypatch):
+    monkeypatch.setenv("FAKE_CREDITS", "1")
+    _, (first, second, usage) = mcp_run({"LOOKPROOF_API_KEY": API_KEY},
+                                        [("mx", {"domain": "example.com"}), ("mx", {"domain": "example.org"}),
+                                         ("get_spending", {})])
+    assert first["credits_remaining"] == 0
+    assert second["error"].startswith("HTTP 429") and "lookproof.dev/pricing" in second["error"]
+    assert "quota_exceeded" in second["api_error"]
+    assert usage["credits_remaining"] == 0 and usage["calls_this_session"] == 1
+    assert fake_lookproof.paid_log == []
+
+
+def test_mcp_key_mode_refuses_bad_settings(api):
+    r = run("-m", "lookproof_mcp", env={**SERVER_ENV, "LOOKPROOF_API_KEY": "not-a-lookproof-key"})
+    assert r.returncode == 1 and "starts with lp_" in r.stderr
+    r = run("-m", "lookproof_mcp", env={**SERVER_ENV, "LOOKPROOF_API_KEY": API_KEY, "X402_PAY": "1"})
+    assert r.returncode == 1 and "not both" in r.stderr
 
 
 def test_mcp_check_matches_endpoint_prices(api):

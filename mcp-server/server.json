@@ -2,9 +2,9 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.lookproof/lookproof-mcp",
   "title": "Lookproof DNS and mail security checks",
-  "description": "SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS and DNS checks for domains, paid per call in USDC (x402)",
-  "version": "0.1.0",
-  "websiteUrl": "https://lookproof.dev",
+  "description": "SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS and DNS checks for domains, with an API key or USDC (x402)",
+  "version": "0.2.0",
+  "websiteUrl": "https://lookproof.dev/agents",
   "repository": {
     "url": "https://github.com/lookproof/x402-examples",
     "source": "github",
@@ -15,15 +15,21 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "lookproof-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
+          "name": "LOOKPROOF_API_KEY",
+          "description": "Lookproof API key (lp_...). Calls use your plan's credits, no wallet needed. Free key with 250 credits a month: https://lookproof.dev/pricing",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
           "name": "X402_PAY",
-          "description": "Set to 1 to pay for calls. Without it every tool is a dry run that only reports the price.",
+          "description": "x402 only: set to 1 to pay for calls in USDC. Without it (and without LOOKPROOF_API_KEY) every tool is a dry run that only reports the price.",
           "isRequired": false
         },
         {
