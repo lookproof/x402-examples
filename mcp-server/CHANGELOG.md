@@ -9,6 +9,8 @@
 - `Dockerfile` that runs the server as a dry run, with no key, wallet or other secret, for automated checks such as Glama's.
 - `server.json`: `websiteUrl` is now https://lookproof.dev/agents, the setup page for MCP clients.
 - x402 mode is unchanged.
+- New tool descriptions: each says when to pick the tool, what it returns and gives an example question; overlapping tools name each other (`dmarc` and `spoofable`, `spf` and `spf_flatten`, `mx` and `mail_provider`, `tlsrpt` and `mta_sts`). The same texts as the hosted server (`api.lookproof.dev/mcp`). Tool names, parameters and results are unchanged.
+- `mail_check`'s `dkim_selectors` and `dns_lookup`'s `types` have a parameter description with the comma-separated format, which was in the tool description before.
 
 ## 0.1.0
 
