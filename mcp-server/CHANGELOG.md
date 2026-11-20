@@ -1,11 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 (unreleased)
 
+- Registry and README describe the free API key and the hosted server first: `server.json` has a new title and description ("Free API key or pay-per-call (x402)") and lists the hosted server at `https://api.lookproof.dev/mcp` under `remotes` (Streamable HTTP, optional `Authorization` header). The README's first paragraph names the free key and the hosted server before x402.
 - New tool descriptions: each says when to pick the tool, what it returns and gives an example question; overlapping tools name each other (`dmarc` and `spoofable`, `spf` and `spf_flatten`, `mx` and `mail_provider`, `tlsrpt` and `mta_sts`). The same texts as the hosted server (`api.lookproof.dev/mcp`). Tool names, parameters and results are unchanged.
 - `mail_check`'s `dkim_selectors` and `dns_lookup`'s `types` have a parameter description with the comma-separated format, which was in the tool description before.
 
-## 0.2.0 (unreleased)
+## 0.2.0
 
 - API-key mode: with `LOOKPROOF_API_KEY` set, every tool calls Lookproof with `Authorization: Bearer` and uses the credits of your plan instead of paying with x402. No wallet is needed. Tool descriptions say "Uses your Lookproof credits." and results carry `credits_remaining` and `credits_limit` from the `X-Quota-*` headers.
 - `get_spending` reports the plan, the period and the credits used and left (from `GET /v1/usage`) in API-key mode, and gains a `mode` field (`api_key` or `x402`) in both modes.

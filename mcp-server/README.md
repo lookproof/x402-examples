@@ -2,14 +2,15 @@
 
 <!-- mcp-name: io.github.lookproof/lookproof-mcp -->
 
-An [MCP](https://modelcontextprotocol.io) server that gives Claude and other AI agents 23 [Lookproof](https://lookproof.dev) tools: domain and site health, SPF, DKIM, DMARC, MTA-STS, BIMI, DNS, DNSSEC, CAA, RDAP, TLS certificates and HTTP security headers.
+An [MCP](https://modelcontextprotocol.io) server that gives Claude and other AI agents 23 [Lookproof](https://lookproof.dev) tools: domain and site health, SPF, DKIM, DMARC, MTA-STS, BIMI, DNS, DNSSEC, CAA, RDAP, TLS certificates and HTTP security headers. Start with a [free API key (250 credits a month)](https://lookproof.dev/pricing); paying per call with x402 is optional.
 
-There are two ways to pay for the checks:
+There are three ways to use it:
 
-1. **API key (start here).** A [free key with 250 credits a month](https://lookproof.dev/pricing). Set `LOOKPROOF_API_KEY` and every call uses your plan's credits. No wallet, no crypto.
-2. **x402.** The agent pays per call in USDC on Base, from a wallet you control, with a spending cap per session. No account needed.
+1. **Free API key (start here).** A [free key with 250 credits a month](https://lookproof.dev/pricing). Set `LOOKPROOF_API_KEY` and every call uses your plan's credits. No wallet, no crypto.
+2. **Hosted server, nothing to install.** Lookproof runs the same tools at `https://api.lookproof.dev/mcp` (Streamable HTTP). Without a key it is a small free trial; send your API key as `Authorization: Bearer lp_live_...` to use your credits. Setup: [lookproof.dev/agents](https://lookproof.dev/agents#hosted).
+3. **x402 pay-per-call.** This package pays per call in USDC on Base, from a wallet you control, with a spending cap per session. No account needed.
 
-With neither set, nothing is ever charged: every tool is a dry run that reports the price and returns no data.
+With neither a key nor `X402_PAY=1`, this package never charges anything: every tool is a dry run that reports the price and returns no data.
 
 ```bash
 uvx lookproof-mcp --version     # needs uv: https://docs.astral.sh/uv/
