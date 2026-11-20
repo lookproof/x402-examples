@@ -16,11 +16,12 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import httpx
 from eth_account import Account
 from mcp.server import MCPServer
+from pydantic import Field  # a dependency of mcp
 from lookproof_mcp import __version__
 from x402 import x402Client
 from x402.http import decode_payment_required_header, decode_payment_response_header
@@ -250,128 +251,177 @@ async def get_spending() -> dict:
 
 # --- Overviews ---------------------------------------------------------------
 
-@paid(0.08, "Full domain health in one call: MX, SPF, DMARC, DKIM selector discovery, MTA-STS with TLS-RPT, "
-            "DNSSEC, reverse DNS of the mail servers, BIMI and CAA, with findings. Best first call for a domain.")
+@paid(0.08, "Use when the user asks for a full email and DNS audit of a domain, or why mail is rejected or "
+            "lands in spam. Returns MX, SPF, DMARC, DKIM, MTA-STS, DNSSEC, mail server reverse DNS, BIMI, CAA "
+            "and provider, with findings. No blocklist or content check. Ex: 'Why does mail from example.com go"
+            " to spam?'.")
 async def domain_health(domain: str) -> dict:
     return await call("GET", "/v1/domain/health", 0.08, {"domain": domain})
 
 
-@paid(0.025, "Website health in one call: TLS certificate, HTTP security headers and RDAP registration data.")
+@paid(0.025, "Use when the user asks for a website security check in one call. Returns the SSL/TLS certificate, "
+             "redirects and security headers, and domain expiry and status from RDAP, with findings. Ex: 'Is "
+             "example.com set up securely?'.")
 async def site_health(domain: str) -> dict:
     return await call("GET", "/v1/site/health", 0.025, {"domain": domain})
 
 
 # --- Mail -------------------------------------------------------------------
 
-@paid(0.03, "Mail configuration: MX, SPF and DMARC together, plus DKIM for the selectors you pass "
-            "(comma-separated, e.g. 'google,selector1').")
-async def mail_check(domain: str, dkim_selectors: str | None = None) -> dict:
+# Parameter descriptions as on the hosted server (probekit_contracts.mcp_tools in lookproof).
+_SELECTORS = Field(description="Optional DKIM selectors, comma-separated (at most 5).")
+_TYPES = Field(description="Optional record types, comma-separated: A, AAAA, CNAME, MX, NS, TXT, SOA, CAA, "
+                           "SRV (default A).")
+
+
+@paid(0.03, "Use when the user asks about mail setup or why mail goes to spam (no reputation, content or "
+            "blocklist checks). Returns MX, SPF, DMARC, DKIM (your selectors) and a spoofing category. One "
+            "domain per call; domain_health adds DKIM discovery and MTA-STS. Ex: 'Check example.com'.")
+async def mail_check(domain: str, dkim_selectors: Annotated[str | None, _SELECTORS] = None) -> dict:
     return await call("GET", "/v1/mail/check", 0.03, {"domain": domain, "dkim_selectors": _list(dkim_selectors)})
 
 
-@paid(0.01, "SPF record: parsed include tree, all qualifier, DNS lookup count against the limit of 10.")
+@paid(0.01, "Use when the user asks if a domain's SPF record is valid, why a sender fails SPF or if it hits the"
+            " 10-lookup limit. Returns the include tree, all qualifier and lookup counts. For the IP ranges use"
+            " spf_flatten. Ex: 'Is the SPF of example.com valid?'.")
 async def spf(domain: str) -> dict:
     return await call("GET", "/v1/mail/spf", 0.01, {"domain": domain})
 
 
-@paid(0.01, "SPF flattening analysis: every IP range the record authorizes, as a receiver would evaluate it.")
+@paid(0.01, "Use when the user asks which IP addresses or servers may send mail for a domain, or to flatten "
+            "SPF. Returns every IPv4 and IPv6 block the record authorizes, with the include it came from. "
+            "Analysis only. Ex: 'Which IPs may send mail as example.com?'.")
 async def spf_flatten(domain: str) -> dict:
     return await call("GET", "/v1/mail/spf-flatten", 0.01, {"domain": domain})
 
 
-@paid(0.01, "DMARC record: policy, subdomain policy, pct, alignment and report addresses (RFC 9989 tree walk).")
+@paid(0.01, "Use when the user asks about a domain's DMARC record itself, or why reports do not arrive. Returns"
+            " policy, subdomain policy, pct, alignment and report addresses with findings. For a spoofing "
+            "verdict use spoofable. Ex: 'What is the DMARC policy of example.com?'.")
 async def dmarc(domain: str) -> dict:
     return await call("GET", "/v1/mail/dmarc", 0.01, {"domain": domain})
 
 
-@paid(0.01, "DKIM key for one selector: key type and size, testing and revoked flags.")
+@paid(0.01, "Use when the user asks whether the DKIM key for a known selector is published and valid. Returns "
+            "key type, size, testing and revoked flags with findings. Unknown selector: use dkim_discover. Ex: "
+            "'Check DKIM selector1 for example.com'.")
 async def dkim(domain: str, selector: str) -> dict:
     return await call("GET", "/v1/mail/dkim", 0.01, {"domain": domain, "selector": selector})
 
 
-@paid(0.02, "DKIM selector discovery: tries the common selectors and returns the keys found.")
+@paid(0.02, "Use when the user asks whether a domain has DKIM but no selector is known. Tries 31 common "
+            "selectors and returns each key found with type, size and flags. None found is a hint, not proof "
+            "that DKIM is missing. Ex: 'Does example.com use DKIM?'.")
 async def dkim_discover(domain: str) -> dict:
     return await call("GET", "/v1/mail/dkim-discover", 0.02, {"domain": domain})
 
 
-@paid(0.02, "MTA-STS and TLS-RPT: fetches the policy, checks mode and max_age, compares the policy with the MX hosts.")
+@paid(0.02, "Use when the user asks about MTA-STS or whether inbound mail is protected against TLS downgrade. "
+            "Returns the record, the fetched policy, mode, max_age and MX coverage, plus the TLS-RPT record. "
+            "Ex: 'Is MTA-STS set up for example.com?'.")
 async def mta_sts(domain: str) -> dict:
     return await call("GET", "/v1/mail/mta-sts", 0.02, {"domain": domain})
 
 
-@paid(0.01, "TLS-RPT record: TLS reporting addresses for the domain.")
+@paid(0.01, "Use when the user asks only about TLS-RPT (SMTP TLS reporting). Returns the _smtp._tls record and "
+            "its report addresses, with findings. For MTA-STS use mta_sts, which includes TLS-RPT. Ex: 'Where "
+            "do TLS reports for example.com go?'.")
 async def tlsrpt(domain: str) -> dict:
     return await call("GET", "/v1/mail/tlsrpt", 0.01, {"domain": domain})
 
 
-@paid(0.01, "MX records with resolved addresses, null MX and implicit MX.")
+@paid(0.01, "Use when the user asks which mail servers a domain uses or why it cannot receive mail. Returns MX "
+            "hosts by preference with addresses, null MX and implicit MX. Provider name: mail_provider; reverse"
+            " DNS of the servers: domain_health. Ex: 'What are the MX records of example.com?'.")
 async def mx(domain: str) -> dict:
     return await call("GET", "/v1/mail/mx", 0.01, {"domain": domain})
 
 
-@paid(0.01, "Spoofing protection from the published SPF and DMARC policy: protected, partial, monitoring, "
-            "unprotected or broken. Describes the policy; it does not prove whether forged mail gets through.")
+@paid(0.01, "Use when the user asks whether someone can send email pretending to be a domain. Returns "
+            "protected, partial, monitoring, unprotected or broken from the DMARC policy, with gaps. Describes "
+            "the policy; it does not prove forged mail gets through. Ex: 'Can someone spoof example.com?'.")
 async def spoofable(domain: str) -> dict:
     return await call("GET", "/v1/mail/spoofable", 0.01, {"domain": domain})
 
 
-@paid(0.01, "BIMI record: logo and certificate URLs, and whether DMARC is enforced as BIMI requires.")
+@paid(0.01, "Use when the user asks why a brand logo does not show in inboxes, or about BIMI. Returns the BIMI "
+            "record, logo and certificate URLs and whether DMARC is enforced as BIMI requires. The logo is not "
+            "downloaded. Ex: 'Is BIMI set up for example.com?'.")
 async def bimi(domain: str, selector: str | None = None) -> dict:
     return await call("GET", "/v1/mail/bimi", 0.01, {"domain": domain, "selector": selector})
 
 
-@paid(0.005, "Which mail provider handles the domain's mail, from MX and SPF.")
+@paid(0.005, "Use when the user asks who hosts a domain's email (Google, Microsoft 365...) or which services "
+             "send for it. Returns providers matched from MX hosts and SPF includes, with evidence. For raw MX "
+             "records use mx. Ex: 'Who handles email for example.com?'.")
 async def mail_provider(domain: str) -> dict:
     return await call("GET", "/v1/mail/provider", 0.005, {"domain": domain})
 
 
-@paid(0.002, "Parse an SPF record you paste (no DNS lookups).")
+@paid(0.002, "Use when the user pastes an SPF record to explain or check before publishing. Returns mechanisms, "
+             "qualifiers, syntax errors and the number of DNS-lookup terms. No DNS lookups; for a live domain "
+             "use spf. Ex: 'Explain v=spf1 include:_spf.google.com ~all'.")
 async def spf_parse(record: str) -> dict:
     return await call("POST", "/v1/mail/spf-parse", 0.002, body={"record": record})
 
 
-@paid(0.002, "Parse a DMARC record you paste (no DNS lookups).")
+@paid(0.002, "Use when the user pastes a DMARC record to explain or check before publishing. Returns p, sp, np, "
+             "adkim, aspf, rua, ruf and unknown tags, with the same findings as dmarc. No DNS lookups. Ex: "
+             "'Explain v=DMARC1; p=none'.")
 async def dmarc_parse(record: str) -> dict:
     return await call("POST", "/v1/mail/dmarc-parse", 0.002, body={"record": record})
 
 
 # --- DNS --------------------------------------------------------------------
 
-@paid(0.005, "DNS lookup of one name; `types` is a comma-separated list of A, AAAA, CNAME, MX, NS, TXT, SOA, "
-             "CAA, SRV (default A).")
-async def dns_lookup(name: str, types: str | None = None) -> dict:
+@paid(0.005, "Use when the user asks for the current public DNS records of a name, e.g. to confirm a change. "
+             "Returns A, AAAA, CNAME, MX, NS, TXT, SOA, CAA or SRV records with TTL and the resolver that "
+             "answered. No PTR (reverse DNS) lookups. Ex: 'Show the TXT records of example.com'.")
+async def dns_lookup(name: str, types: Annotated[str | None, _TYPES] = None) -> dict:
     return await call("GET", "/v1/dns/lookup", 0.005, {"name": name, "types": _list(types)})
 
 
-@paid(0.01, "DNSSEC state of the domain (secure, insecure, bogus) with DS and DNSKEY details.")
+@paid(0.01, "Use when the user asks whether a domain's DNS is secure or DNSSEC-signed, or why it fails on "
+            "validating resolvers. Returns secure, insecure, bogus or unknown with DS and DNSKEY details. For "
+            "name servers see nameservers, for certificate rules caa. Ex: 'Is the DNS of example.com secure?'.")
 async def dnssec(domain: str) -> dict:
     return await call("GET", "/v1/dns/dnssec", 0.01, {"domain": domain})
 
 
-@paid(0.01, "CAA records: which certificate authorities may issue for the domain.")
+@paid(0.01, "Use when the user asks which certificate authorities may issue SSL certificates for a domain, or "
+            "why issuance is refused. Returns CAA issuers for normal and wildcard certificates and iodef, from "
+            "parents too. Ex: 'Can Let's Encrypt issue for example.com?'.")
 async def caa(domain: str) -> dict:
     return await call("GET", "/v1/dns/caa", 0.01, {"domain": domain})
 
 
-@paid(0.01, "Name servers of the domain with their addresses; flags a single server, unresolvable servers, "
-            "all servers in one network and missing glue.")
+@paid(0.01, "Use when the user asks which name servers a domain uses, who hosts its DNS (from the NS names) or "
+            "whether they are redundant. Returns the NS set with addresses (up to eight); flags a single "
+            "server, unresolvable ones, one network and missing glue. Ex: 'Which name servers does example.com "
+            "use?'.")
 async def nameservers(domain: str) -> dict:
     return await call("GET", "/v1/dns/ns", 0.01, {"domain": domain})
 
 
-@paid(0.01, "Registration data from RDAP (registrar, dates, status). Never registrant personal data.")
+@paid(0.01, "Use when the user asks for a domain's whois or registration data: when it expires, the registrar, "
+            "or if it is locked. Returns registrar, creation, change and expiry dates, statuses and name "
+            "servers from RDAP. No contact data. Ex: 'When does example.com expire?'.")
 async def rdap(domain: str) -> dict:
     return await call("GET", "/v1/domain/rdap", 0.01, {"domain": domain})
 
 
 # --- TLS and HTTP -------------------------------------------------------------
 
-@paid(0.01, "TLS certificate of the domain's HTTPS server: issuer, validity, names and chain.")
+@paid(0.01, "Use when the user asks to check a site's SSL/TLS certificate, why HTTPS fails or when it expires. "
+            "Returns trust, name match, expiry, issuer, chain, key and TLS version for port 443, with findings."
+            " Ex: 'When does the SSL certificate of example.com expire?'.")
 async def tls_certificate(domain: str) -> dict:
     return await call("GET", "/v1/tls/certificate", 0.01, {"domain": domain})
 
 
-@paid(0.01, "HTTP security headers of the domain's website (HSTS, CSP, and others).")
+@paid(0.01, "Use when the user asks which security headers a live website sends or if it forces HTTPS. Returns "
+            "the redirects from http:// and https:// and HSTS, CSP, frame protection, Referrer-Policy and "
+            "cookie flags. Ex: 'Which security headers does example.com miss?'.")
 async def security_headers(domain: str) -> dict:
     return await call("GET", "/v1/http/security-headers", 0.01, {"domain": domain})
 

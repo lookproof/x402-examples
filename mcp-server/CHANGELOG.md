@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- New tool descriptions: each says when to pick the tool, what it returns and gives an example question; overlapping tools name each other (`dmarc` and `spoofable`, `spf` and `spf_flatten`, `mx` and `mail_provider`, `tlsrpt` and `mta_sts`). The same texts as the hosted server (`api.lookproof.dev/mcp`). Tool names, parameters and results are unchanged.
+- `mail_check`'s `dkim_selectors` and `dns_lookup`'s `types` have a parameter description with the comma-separated format, which was in the tool description before.
+
 ## 0.2.0 (unreleased)
 
 - API-key mode: with `LOOKPROOF_API_KEY` set, every tool calls Lookproof with `Authorization: Bearer` and uses the credits of your plan instead of paying with x402. No wallet is needed. Tool descriptions say "Uses your Lookproof credits." and results carry `credits_remaining` and `credits_limit` from the `X-Quota-*` headers.
