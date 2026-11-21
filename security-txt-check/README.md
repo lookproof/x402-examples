@@ -1,6 +1,6 @@
 # security-txt-check
 
-> **Draft.** This folder is the first version of a standalone `lookproof/security-txt-check` repository. It has not been released: there is no `@v1` tag and no PyPI package yet. Until then, run it from this folder (see [Try it from this repository](#try-it-from-this-repository)).
+> **Not released yet.** There is no `v0` tag and no PyPI package until the first release (0.1.0). Until then, pin the action to a commit (`uses: lookproof/security-txt-check@<sha>`) and install from GitHub (see [Command line](#command-line)).
 
 Validates [security.txt](https://www.rfc-editor.org/rfc/rfc9116) (RFC 9116) in CI. It warns before `Expires` runs out and checks the OpenPGP signature. It is a GitHub Action and a command line tool, and both use the same engine. Made by [Lookproof](https://lookproof.dev), which checks DNS, TLS, HTTP headers and email security for domains.
 
@@ -38,7 +38,7 @@ jobs:
   security-txt:
     runs-on: ubuntu-latest
     steps:
-      - uses: lookproof/security-txt-check@v1
+      - uses: lookproof/security-txt-check@v0
         with:
           domains: example.com, example.org
           fail-on: error
@@ -52,7 +52,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: lookproof/security-txt-check@v1
+        with:
+          persist-credentials: false
+      - uses: lookproof/security-txt-check@v0
         with:
           files: public/.well-known/security.txt
           signing-key: .github/security-txt-signing-key.asc
@@ -81,7 +83,7 @@ jobs:
   security-txt:
     runs-on: ubuntu-latest
     steps:
-      - uses: lookproof/security-txt-check@v1
+      - uses: lookproof/security-txt-check@v0
         with:
           domains: example.com
           fail-on: warn
@@ -116,7 +118,13 @@ The action writes a table of findings to the job summary, with findings that mat
 ## Command line
 
 ```bash
-pip install "git+https://github.com/lookproof/x402-examples.git#subdirectory=security-txt-check"
+pip install security-txt-check
+```
+
+Before the first release, install from GitHub instead:
+
+```bash
+pip install "git+https://github.com/lookproof/security-txt-check.git"
 ```
 
 ```bash
@@ -240,28 +248,29 @@ Each finding links to the RFC 9116 section it is about, or to a page on [lookpro
 
 ## More checks with Lookproof
 
-security-txt-check looks at one file. [Lookproof](https://lookproof.dev) checks the rest of a domain: [TLS certificates](https://lookproof.dev/tools/tls/certificate-check), [security headers](https://lookproof.dev/tools/http/security-headers), DNSSEC, and SPF, DKIM and DMARC for email. Use the [site health check](https://lookproof.dev/tools/site/site-health-check) in the browser, through the [API](https://lookproof.dev/docs/api), or from AI agents through the [MCP server](../mcp-server/). For mail authentication in CI there is [dmarc-check](https://github.com/lookproof/dmarc-check).
-
-## Try it from this repository
-
-```bash
-cd security-txt-check
-pip install -e ".[dev]"
-```
-
-```bash
-security-txt-check lookproof.dev
-```
-
-In a workflow in this repository, use the action from the checkout: `uses: ./security-txt-check`.
+security-txt-check looks at one file. [Lookproof](https://lookproof.dev) checks the rest of a domain: [TLS certificates](https://lookproof.dev/tools/tls/certificate-check), [security headers](https://lookproof.dev/tools/http/security-headers), DNSSEC, and SPF, DKIM and DMARC for email. Use the [site health check](https://lookproof.dev/tools/site/site-health-check) in the browser, through the [API](https://lookproof.dev/docs/api), or from AI agents through the [MCP server](https://github.com/lookproof/x402-examples/tree/master/mcp-server). For mail authentication in CI there is [dmarc-check](https://github.com/lookproof/dmarc-check).
 
 ## Development
+
+```bash
+pip install -e ".[dev]"
+```
 
 ```bash
 ruff check . && ruff format --check . && mypy && pytest
 ```
 
 The unit tests use a fake HTTPS fetcher and need no network. The signature tests make throwaway keys with `gpg` and are skipped when it is not installed. `pytest -m network` checks that every lookproof.dev link exists in the lookproof.dev sitemap.
+
+## Releasing
+
+Releases go to PyPI from GitHub Actions with trusted publishing, so no PyPI token is stored anywhere:
+
+1. Set `__version__` in `src/security_txt_check/__init__.py` and add a `## <version> (YYYY-MM-DD)` entry to `CHANGELOG.md`.
+2. Merge that to `main`.
+3. Push a `v<version>` tag from `main`, e.g. `git tag v0.1.0 && git push origin v0.1.0`.
+
+The release workflow checks that the tag is `v<major>.<minor>.<patch>`, matches `__version__`, has a dated CHANGELOG entry and is on `main`. It then runs the tests, builds and smoke-tests the wheel. The upload waits in the `pypi` environment until a reviewer approves it. After the upload it moves the major tag (`v0`) to the release.
 
 ## License
 

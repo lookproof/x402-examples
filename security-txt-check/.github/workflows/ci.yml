@@ -1,11 +1,9 @@
-# CI for the standalone lookproof/security-txt-check repository. While this is a
-# folder in lookproof/x402-examples, .github/workflows/security-txt-check.yml
-# at the repository root runs the same jobs.
-name: CI
+# Lint, types and tests on every push and pull request, plus the action itself on Linux, macOS
+# and Windows. Publishes nothing (see release.yml).
+name: ci
 
 on:
   push:
-    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -13,18 +11,6 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-      - run: pip install -e ".[dev]"
-      - run: ruff check .
-      - run: ruff format --check .
-      - run: mypy
-
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -32,24 +18,44 @@ jobs:
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c  # v6.0.0
         with:
           python-version: ${{ matrix.python }}
       - run: pip install -e ".[dev]"
+      - run: ruff check . && ruff format --check .
+      - run: mypy
       - name: Unit tests (fake HTTPS, real gpg)
         run: pytest --cov=security_txt_check --cov-report=term-missing --cov-fail-under=90
 
-  network-test:
+  links:
     name: lookproof.dev links exist
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c  # v6.0.0
         with:
           python-version: "3.13"
       - run: pip install -e ".[dev]"
       - run: pytest -m network
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+      - run: uv build
+      - name: Install the wheel in a clean venv and run the CLI
+        run: |
+          uv venv /tmp/clean
+          uv pip install --python /tmp/clean/bin/python dist/security_txt_check-*.whl
+          cd /tmp && /tmp/clean/bin/security-txt-check --file "$GITHUB_WORKSPACE"/tests/data/security.txt --fail-on none
 
   action:
     name: action on ${{ matrix.os }}
@@ -59,12 +65,15 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
       - name: Run the action from this checkout
         id: check
         uses: ./
         with:
           domains: lookproof.dev
+          files: tests/data/security.txt
           # Smoke test: we check that the tool runs, not the site's file.
           fail-on: none
       - name: Verify outputs
