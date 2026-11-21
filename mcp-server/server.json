@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.lookproof/lookproof-mcp",
-  "title": "Lookproof DNS and mail security checks",
-  "description": "SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS and DNS checks for domains, with an API key or USDC (x402)",
-  "version": "0.2.0",
+  "title": "Lookproof DNS, mail and TLS security checks",
+  "description": "SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS and DNS checks. Free API key or pay-per-call (x402).",
+  "version": "0.2.1",
   "websiteUrl": "https://lookproof.dev/agents",
   "repository": {
     "url": "https://github.com/lookproof/x402-examples",
@@ -15,7 +15,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "lookproof-mcp",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"
@@ -53,6 +53,20 @@
           "name": "PAYTO_ALLOWLIST",
           "description": "Optional comma-separated addresses the server may pay; a 402 asking for any other payTo is refused",
           "isRequired": false
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.lookproof.dev/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Optional: Bearer followed by your Lookproof API key (lp_live_...). Each tool call then uses your plan's credits. Without it the server is a small free trial (a few calls a day, single checks only). No wallet needed.",
+          "isRequired": false,
+          "isSecret": true
         }
       ]
     }

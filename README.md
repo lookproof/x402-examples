@@ -1,8 +1,8 @@
 # Lookproof x402 examples
 
-[Lookproof](https://lookproof.dev)'s API runs DNS and email security checks (SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS, HTTP headers and more) per call, paid in USDC on Base with the [x402 protocol](https://x402.org). No account, no API key: the payment is the credential.
+[Lookproof](https://lookproof.dev)'s API runs DNS and email security checks (SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS, HTTP headers and more) for domains. Use it with a [free API key (250 credits a month)](https://lookproof.dev/pricing), from AI agents through the hosted MCP server at `https://api.lookproof.dev/mcp` or the [`lookproof-mcp`](mcp-server/) package, or pay per call in USDC on Base with the [x402 protocol](https://x402.org), with no account: the payment is the credential.
 
-These examples get you from zero to a paid check in a few minutes, and show how agents and scripts can build on it.
+The quickstart and the domain monitor show the x402 way: from zero to a paid check in a few minutes. The MCP server works with either a key or x402.
 
 ## Examples
 
@@ -10,7 +10,7 @@ These examples get you from zero to a paid check in a few minutes, and show how 
 |---|---|---|---|
 | [quickstart](quickstart/) | Python, TypeScript | One paid call to the domain health check (`/v1/domain/health`) | $0.08 |
 | [domain-monitor](domain-monitor/) | Python | Checks a list of domains daily and alerts (stdout, Discord, Telegram, email) when SPF, DKIM, DMARC or MTA-STS changes or gets weaker | $0.08 per domain |
-| [mcp-server](mcp-server/) | Python | 23 Lookproof checks as MCP tools for Claude and other AI agents, paid per call with a session cap. Installs with `uvx lookproof-mcp` | $0.002-0.08 per tool call |
+| [mcp-server](mcp-server/) | Python | 23 Lookproof checks as MCP tools for Claude and other AI agents, with a free API key or paid per call with a session cap. Installs with `uvx lookproof-mcp` | API key: 1-5 credits; x402: $0.002-0.08 per tool call |
 
 All 47 paid endpoints with prices, inputs and example responses: [docs/endpoints.md](docs/endpoints.md). Prices range from $0.002 to $0.08 per call.
 
