@@ -1,0 +1,7 @@
+# Example security.txt used by the action smoke test.
+Contact: mailto:security@example.com
+Contact: https://example.com/security
+Expires: 2026-12-31T23:59:59Z
+Preferred-Languages: en, da
+Canonical: https://example.com/.well-known/security.txt
+Policy: https://example.com/disclosure
