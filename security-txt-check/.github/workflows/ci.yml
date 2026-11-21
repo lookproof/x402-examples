@@ -1,0 +1,78 @@
+# CI for the standalone lookproof/security-txt-check repository. While this is a
+# folder in lookproof/x402-examples, .github/workflows/security-txt-check.yml
+# at the repository root runs the same jobs.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - name: Unit tests (fake HTTPS, real gpg)
+        run: pytest --cov=security_txt_check --cov-report=term-missing --cov-fail-under=90
+
+  network-test:
+    name: lookproof.dev links exist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - run: pytest -m network
+
+  action:
+    name: action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run the action from this checkout
+        id: check
+        uses: ./
+        with:
+          domains: lookproof.dev
+          # Smoke test: we check that the tool runs, not the site's file.
+          fail-on: none
+      - name: Verify outputs
+        shell: bash
+        env:
+          REPORT: ${{ steps.check.outputs.json }}
+          EXIT_CODE: ${{ steps.check.outputs.exit-code }}
+        run: |
+          test "$EXIT_CODE" = "0"
+          echo "$REPORT" | grep -q '"tool": "security-txt-check"'
+          if echo "$REPORT" | grep -q '"check-internal-error"'; then exit 1; fi

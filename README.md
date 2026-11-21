@@ -14,6 +14,12 @@ The quickstart and the domain monitor show the x402 way: from zero to a paid che
 
 All 47 paid endpoints with prices, inputs and example responses: [docs/endpoints.md](docs/endpoints.md). Prices range from $0.002 to $0.08 per call.
 
+## Tools
+
+| Tool | What it does |
+|---|---|
+| [security-txt-check](security-txt-check/) (draft) | GitHub Action and CLI that validates security.txt (RFC 9116), warns before `Expires` and verifies the OpenPGP signature. Runs locally, no API calls |
+
 ## Quickstart
 
 You need a dedicated wallet with a few dollars of USDC on Base mainnet (see [Security](#security)).
