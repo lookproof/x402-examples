@@ -186,6 +186,15 @@ def test_server_json_matches_package():
                          "PAYTO_ALLOWLIST"}
     assert all(e.get("isSecret") for e in pkg["environmentVariables"] if e["name"] in ("PRIVATE_KEY", "LOOKPROOF_API_KEY"))
     assert f"## {VERSION} " in (PKG / "CHANGELOG.md").read_text()
+    # Catalogues copy the description: the free key comes before x402.
+    assert "Free API key" in sj["description"] and sj["description"].index("Free") < sj["description"].index("x402")
+    # The hosted server (lookproof/lookproof, api.lookproof.dev/mcp): an optional API key (the
+    # authless trial answers without one), no wallet.
+    (remote,) = sj["remotes"]
+    assert remote["type"] == "streamable-http" and remote["url"] == "https://api.lookproof.dev/mcp"
+    (header,) = remote["headers"]
+    assert header["name"] == "Authorization" and header["isSecret"]
+    assert header["isRequired"] is False
 
 
 def test_package_docs_have_no_em_dashes_or_relative_links():
