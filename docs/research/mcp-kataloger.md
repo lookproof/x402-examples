@@ -14,7 +14,8 @@ Metode: sider hentet 2026-11-21 (Glama, mcp.so, MCP Market, officielle MCP Regis
 | MCP Market | Ikke fundet i søgning | Ikke fundet | Indsend GitHub-repo (gratis) eller $29 |
 | Smithery | **Uverificeret** (host blokeret af netværkspolitik) | **Uverificeret** | Tjek manuelt |
 | PulseMCP | **Uverificeret** (403 fra sitet) | **Uverificeret** | Tjek manuelt |
-| awesome-mcp-servers (punkpeye, appcypher) | Ikke fundet i den del, der kunne læses | Ikke fundet | PR-tekster nedenfor |
+| awesome-mcp-servers (punkpeye) | PR [#20345](https://github.com/punkpeye/awesome-mcp-servers/pull/20345) åben (2026-11-22) | Ikke indsendt | Afvent review |
+| awesome-mcp-servers (appcypher) | Repoet er arkiveret (maj 2026), PR'er slået fra | Samme | Ingen; kan ikke indsendes |
 | Claudes connector-katalog | Ikke indsendt | Ikke indsendt | Lookproof kan indsendes; SwapHunt har ikke egnet profil endnu |
 
 Vigtigt fund: `https://api.swaphunt.dev/mcp` svarer 200 på `initialize` (serverInfo `swaphunt` 0.1.0, titel "SwapHunt (free trial)") og har 6 tools. `docs/hosted-mcp.md` i swaphunt/x402-examples siger, at den endnu er 404 bag `SWAPHUNT_MCP_ENABLED=false`. Dokumentet er altså forældet, eller flaget er slået til uden dokumentation. Afklar med ejeren, før noget indsendes med den URL.
@@ -62,13 +63,17 @@ SwapHunt: ingen server- eller connector-listing (søgning på `swaphunt`, `swaph
 
 ## awesome-mcp-servers
 
+Status 2026-11-22: kun punkpeye-listen er aktiv. appcypher/awesome-mcp-servers er arkiveret (sidste push 2026-05-06) med PR'er slået fra, så der kan ikke indsendes dertil. Lookproof er indsendt til punkpeye som PR [#20345](https://github.com/punkpeye/awesome-mcp-servers/pull/20345) (fork `realninjadaddy/awesome-mcp-servers`, branch `add-lookproof`, commits som Lookproof <github@lookproof.dev>). Hele README og oversættelserne blev tjekket først: Lookproof stod der ikke. Linjen står under 🔒 Security mellem `LaurieWired/GhidraMCP` og `luiacuaniello/perspectivegraph` (sektionen er ikke sorteret i praksis) med Glama-badge og `🎖️ 🐍 ☁️ 🏠 🍎 🪟 🐧`. SwapHunt er ikke indsendt.
+
 Fundet (punkpeye/awesome-mcp-servers og appcypher/awesome-mcp-servers, CONTRIBUTING og README):
 
 - punkpeye: fork, branch, ret `README.md`, åbn PR; commit "Add new XYZ server". Navn linket til repo plus kort beskrivelse; alfabetisk orden i hver kategori. Tilføj `🤖🤖🤖` til slutningen af PR-titlen for at tilvælge fast-track (agent-PR). Kun remote servere uden pakke hører hjemme i `awesome-remote-mcp-servers`; vores to har installerbare PyPI-pakker og hører i hovedlisten. Kategorier: 🔒 Security (Lookproof), 💰 Finance & Fintech (SwapHunt); der er ingen "Cryptocurrency"-overskrift. README er meget stor (1,75 M tegn); kun begyndelsen blev læst, så "ikke listet" er **ikke verificeret**. Glama-badge kræves ikke i CONTRIBUTING, men de fleste poster har et.
-- appcypher: én PR pr. forslag, tilføj nederst i kategorien, alfabetisk orden, brugbar titel. Kategorier 🔒 Security og 💹 Finance. Ikke listet i den læste del (resten er modelresumé).
+- appcypher (arkiveret maj 2026, gælder ikke længere): én PR pr. forslag, tilføj nederst i kategorien, alfabetisk orden, brugbar titel. Kategorier 🔒 Security og 💹 Finance. Ikke listet i den læste del (resten er modelresumé).
 - modelcontextprotocol/servers har ingen community-liste; den henviser til MCP Registry.
 
-### PR-tekst 1: punkpeye, Lookproof
+### PR-tekst 1: punkpeye, Lookproof (indsendt som #20345)
+
+Den indsendte linje har 🎖️ (official implementation) foran 🐍, Glama-badge og en beskrivelse med 23 read-only tools; teksten herunder er det oprindelige forslag.
 
 Titel: `Add Lookproof (DNS and email security checks) 🤖🤖🤖`
 
@@ -103,7 +108,7 @@ Adds swaphunt-mcp (PyPI, MIT, `uvx swaphunt-mcp`). Dry run by default: no paymen
 
 Hvis ejeren vil nævne den hostede prøve (`https://api.swaphunt.dev/mcp`, 6 gratis tools), skal URL-status først afklares (se afsnittet om uoverensstemmelse ovenfor), og linjen skifter 🏠 til 🏠 ☁️.
 
-### PR-tekst 3 og 4: appcypher
+### PR-tekst 3 og 4: appcypher (udgået: repoet er arkiveret)
 
 En PR pr. forslag. Titler: `Add Lookproof` (Security, nederst i kategorien) og `Add SwapHunt` (Finance, nederst). Samme beskrivelser som ovenfor, uden emoji-legende udover det, listen bruger. Kontrollér format mod kategoriens nuværende poster.
 
