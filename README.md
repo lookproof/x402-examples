@@ -1,5 +1,7 @@
 # Lookproof x402 examples
 
+[![lookproof/x402-examples MCP server](https://glama.ai/mcp/servers/lookproof/x402-examples/badges/score.svg)](https://glama.ai/mcp/servers/lookproof/x402-examples)
+
 [Lookproof](https://lookproof.dev)'s API runs DNS and email security checks (SPF, DKIM, DMARC, MTA-STS, DNSSEC, TLS, HTTP headers and more) for domains. Use it with a [free API key (250 credits a month)](https://lookproof.dev/pricing), from AI agents through the hosted MCP server at `https://api.lookproof.dev/mcp` or the [`lookproof-mcp`](mcp-server/) package, or pay per call in USDC on Base with the [x402 protocol](https://x402.org), with no account: the payment is the credential.
 
 The quickstart and the domain monitor show the x402 way: from zero to a paid check in a few minutes. The MCP server works with either a key or x402.
