@@ -1,0 +1,77 @@
+# Publishes security-txt-check to PyPI when a tag like v0.1.0 is pushed, with PyPI Trusted
+# Publishing (OIDC): no PyPI token is stored anywhere. The `pypi` environment has a required
+# reviewer, so the publish job waits for approval in GitHub before anything is uploaded.
+# After the upload, the major tag (v0, v1, ...) is moved to the release so that
+# `uses: lookproof/security-txt-check@v0` follows it.
+name: release
+
+on:
+  push:
+    tags: ["v[0-9]*.[0-9]*.[0-9]*"]   # not the moving v0/v1 tags
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0             # the tag check below needs main's history
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+      - name: Tag must match package version and CHANGELOG, and be on main
+        run: |
+          version=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' src/security_txt_check/__init__.py)
+          case "${GITHUB_REF_NAME}" in
+            v[0-9]*.[0-9]*.[0-9]*) ;;
+            *) echo "::error::tag ${GITHUB_REF_NAME} is not v<major>.<minor>.<patch>"; exit 1 ;;
+          esac
+          test "v${version}" = "${GITHUB_REF_NAME}" || { echo "::error::tag ${GITHUB_REF_NAME} != v${version}"; exit 1; }
+          grep -q "^## ${version} " CHANGELOG.md || { echo "::error::CHANGELOG.md has no entry for ${version}"; exit 1; }
+          if grep -q "^## ${version} (unreleased)" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md still marks ${version} as unreleased"; exit 1
+          fi
+          git merge-base --is-ancestor "${GITHUB_SHA}" origin/main || { echo "::error::${GITHUB_REF_NAME} is not on main"; exit 1; }
+      - name: Tests
+        run: uv run --with pytest==9.2.0 pytest -q
+      - run: uv build
+      - name: Smoke test the wheel
+        run: |
+          cd /tmp
+          uv tool run --isolated --from "$GITHUB_WORKSPACE"/dist/security_txt_check-*.whl \
+            security-txt-check --file "$GITHUB_WORKSPACE"/tests/data/security.txt --fail-on none
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi                 # must match the trusted publisher configured on PyPI
+      url: https://pypi.org/p/security-txt-check
+    permissions:
+      id-token: write            # lets PyPI verify this workflow; nothing else
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: dist
+          path: dist/
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+      - run: uv publish --trusted-publishing always
+
+  major-tag:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write            # moves the v0/v1 tag; nothing else
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - name: Move the major tag to this release
+        run: |
+          major="${GITHUB_REF_NAME%%.*}"
+          git tag -f "${major}" "${GITHUB_SHA}"
+          git push -f origin "refs/tags/${major}"

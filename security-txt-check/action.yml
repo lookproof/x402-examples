@@ -1,0 +1,98 @@
+name: security-txt-check
+description: Validate security.txt (RFC 9116) for your domains or repo files, warn before Expires and verify the signature.
+author: Lookproof
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  domains:
+    description: >-
+      Comma-separated domains or https URLs. A domain checks
+      https://<domain>/.well-known/security.txt.
+    required: false
+    default: ""
+  files:
+    description: Comma-separated paths to security.txt files in the repository, checked before they are deployed.
+    required: false
+    default: ""
+  fail-on:
+    description: >-
+      When the step fails. "error" (default), "warn", "info", "none", and/or a comma list
+      of finding ids, e.g. "error,securitytxt-not-signed".
+    required: false
+    default: error
+  expires-warn-days:
+    description: Warn (securitytxt-expires-soon) when Expires is less than this many days away.
+    required: false
+    default: "30"
+  signing-key:
+    description: >-
+      Path to an OpenPGP public key (armored or binary). When set, signatures are verified
+      with gpg against this key only.
+    required: false
+    default: ""
+  create-issue:
+    description: >-
+      "true" to open or update one issue while the check fails and close it when it passes.
+      Meant for scheduled runs. Needs "issues: write".
+    required: false
+    default: "false"
+  issue-title:
+    description: Title of the tracking issue. Issues are matched on this exact title.
+    required: false
+    default: "security-txt-check: security.txt problems"
+  github-token:
+    description: Token used for create-issue.
+    required: false
+    default: ${{ github.token }}
+  python-version:
+    description: Python version used to run the check. It is not added to PATH for later steps.
+    required: false
+    default: "3.12"
+
+outputs:
+  json:
+    description: All findings as JSON.
+    value: ${{ steps.check.outputs.json }}
+  exit-code:
+    description: 0 when nothing matches fail-on, 1 when something does, 2 on invalid input.
+    value: ${{ steps.check.outputs.exit-code }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      id: python
+      uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c  # v6.0.0
+      with:
+        python-version: ${{ inputs.python-version }}
+        update-environment: false
+
+    - name: Install security-txt-check
+      id: install
+      shell: bash
+      env:
+        PYTHON: ${{ steps.python.outputs.python-path }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: |
+        venv="$RUNNER_TEMP/security-txt-check-venv"
+        "$PYTHON" -m venv "$venv"
+        if [ -x "$venv/bin/python" ]; then py="$venv/bin/python"; else py="$venv/Scripts/python.exe"; fi
+        "$py" -m pip install --quiet --disable-pip-version-check "$ACTION_PATH"
+        echo "python=$py" >> "$GITHUB_OUTPUT"
+
+    - name: Run security-txt-check
+      id: check
+      shell: bash
+      env:
+        PYTHON: ${{ steps.install.outputs.python }}
+        SECURITY_TXT_CHECK_DOMAINS: ${{ inputs.domains }}
+        SECURITY_TXT_CHECK_FILES: ${{ inputs.files }}
+        SECURITY_TXT_CHECK_FAIL_ON: ${{ inputs.fail-on }}
+        SECURITY_TXT_CHECK_EXPIRES_WARN_DAYS: ${{ inputs.expires-warn-days }}
+        SECURITY_TXT_CHECK_SIGNING_KEY: ${{ inputs.signing-key }}
+        SECURITY_TXT_CHECK_CREATE_ISSUE: ${{ inputs.create-issue }}
+        SECURITY_TXT_CHECK_ISSUE_TITLE: ${{ inputs.issue-title }}
+        SECURITY_TXT_CHECK_GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: '"$PYTHON" -m security_txt_check.action'

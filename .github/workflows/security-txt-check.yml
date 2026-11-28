@@ -1,0 +1,64 @@
+name: security-txt-check
+
+on:
+  push:
+    branches: [master]
+    paths: ["security-txt-check/**", ".github/workflows/security-txt-check.yml"]
+  pull_request:
+    paths: ["security-txt-check/**", ".github/workflows/security-txt-check.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: security-txt-check
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: pytest --cov=security_txt_check --cov-report=term-missing --cov-fail-under=90
+      - run: pytest -m network
+
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the action from this checkout
+        id: check
+        uses: ./security-txt-check
+        with:
+          domains: lookproof.dev
+          files: security-txt-check/tests/data/security.txt
+          fail-on: none
+      - name: Verify outputs
+        env:
+          REPORT: ${{ steps.check.outputs.json }}
+          EXIT_CODE: ${{ steps.check.outputs.exit-code }}
+        run: |
+          test "$EXIT_CODE" = "0"
+          echo "$REPORT" | grep -q '"tool": "security-txt-check"'
+          if echo "$REPORT" | grep -q '"check-internal-error"'; then exit 1; fi
